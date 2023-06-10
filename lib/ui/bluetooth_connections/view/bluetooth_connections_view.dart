@@ -89,17 +89,23 @@ class _BluetoothConnectionViewState extends State<BluetoothConnectionView>
                   itemBuilder: (context, index) {
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.black12,
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: Center(
-                            child: Text(
-                                controller.scanResults.value[index].name ??
-                                    'Device $index'),
+                      child: GestureDetector(
+                        onTap: () {
+                          controller.connectToBluetoothDevice(
+                              controller.scanResults.value[index]);
+                        },
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.black12,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Center(
+                              child: Text(
+                                  controller.scanResults.value[index].name ??
+                                      'Device $index'),
+                            ),
                           ),
                         ),
                       ),
