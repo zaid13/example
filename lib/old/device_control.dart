@@ -34,8 +34,8 @@ class _DeviceControlState extends State<DeviceControl> {
 
   _DeviceControlState(this._serviceInfos);
 
-  var readService ;
-  String fileString ="";
+  var readService;
+  String fileString = "";
   @override
   void dispose() {
     _serviceDiscoveryStream.cancel();
@@ -76,8 +76,8 @@ class _DeviceControlState extends State<DeviceControl> {
     });
     _deviceSignalResultStream =
         widget._device.deviceSignalResultStream.listen((event) async {
-          print('new data 22');
-          print(event.data);
+      print('new data 22');
+      print(event.data);
 
       String? data;
       List<int> bytes = [];
@@ -85,32 +85,29 @@ class _DeviceControlState extends State<DeviceControl> {
       if (event.data != null && event.data!.isNotEmpty) {
         data = "";
 
-
         for (int i = 0; i < event.data!.length; i++) {
           String currentStr = event.data![i].toString();
-
 
           if (currentStr.length < 2) {
             currentStr = "0" + currentStr;
           }
           String asciiString = String.fromCharCode(int.parse(currentStr));
 
-          data = data! +asciiString;
+          data = data! + asciiString;
         }
       }
-         File file =  await writeFile(bytes);
+      File file = await writeFile(bytes);
       print("file exists");
-          await file.setLastAccessed(DateTime.now());
-          print(await file.exists());
+      await file.setLastAccessed(DateTime.now());
+      print(await file.exists());
 
-          if(event.data==null || event.data?.length==0 ){}
-          else if(event.data?.length==1 && event.data![0]==32  ){
-           print('file recieved ');
-           print(fileString.length);
-          }else if (data!=null){
-            fileString +=data;
-          }
-
+      if (event.data == null || event.data?.length == 0) {
+      } else if (event.data?.length == 1 && event.data![0] == 32) {
+        print('file recieved ');
+        print(fileString.length);
+      } else if (data != null) {
+        fileString += data;
+      }
 
       if (event.type == DeviceSignalType.characteristicsRead ||
           event.type == DeviceSignalType.unKnown) {
@@ -165,8 +162,7 @@ class _DeviceControlState extends State<DeviceControl> {
     });
   }
 
-  convert_hex_to_string(String hexString){
-
+  convert_hex_to_string(String hexString) {
     hexString = hexString.replaceAll(":0x", '');
     hexString = hexString.replaceAll("data", '');
     print("77");
@@ -176,26 +172,29 @@ class _DeviceControlState extends State<DeviceControl> {
     // print(hexString);
     // List<int> bytes = HEX.decode(hexString);
     // String asciiString = String.fromCharCodes(bytes);
-    return hexString.length.toString()+'    '+hexString;
+    return hexString.length.toString() + '    ' + hexString;
   }
+
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
 
     return directory.path;
   }
+
   Future<File> get _localFile async {
     final path = await _localPath;
     print('path: $path');
 
-
     return File('$path/zip.zip');
   }
+
   Future<File> writeFile(List<int> bytes) async {
     final file = await _localFile;
     //file.writeAsString('bytes');
     // Write the file
     return file.writeAsBytes(bytes);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -294,7 +293,10 @@ class _DeviceControlState extends State<DeviceControl> {
                         style: const TextStyle(color: Colors.green)),
                     Text(_logs[index]._characteristic + " return:",
                         style: const TextStyle(color: Colors.grey)),
-                    Text( convert_hex_to_string(_logs[index]._data),style: TextStyle(color: Colors.blue),),
+                    Text(
+                      convert_hex_to_string(_logs[index]._data),
+                      style: TextStyle(color: Colors.blue),
+                    ),
                     const Padding(
                       padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
                     )
@@ -322,388 +324,362 @@ class _DeviceControlState extends State<DeviceControl> {
                 }
               }
 
-                return ExpansionPanel(
-                    headerBuilder: (context, isExpanded) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(serviceTitle,
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
-                          FittedBox(
-                            fit: BoxFit.contain,
-                            child: Row(
+              return ExpansionPanel(
+                  headerBuilder: (context, isExpanded) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(serviceTitle,
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        FittedBox(
+                          fit: BoxFit.contain,
+                          child: Row(
+                            children: [
+                              const Text("UUID:",
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.grey)),
+                              Text(service._serviceInfo.serviceUuid,
+                                  style: const TextStyle(fontSize: 14))
+                            ],
+                          ),
+                        )
+                      ],
+                    );
+                  },
+                  body: Column(
+                    children: service._serviceInfo.characteristics
+                        .map((characteristic) {
+                      if ('586870fd-4a57-4eef-9c73-c1e65b4dd86e' ==
+                          characteristic.uuid) {
+                        readService = characteristic;
+                      }
+
+                      String properties = "";
+                      List<ElevatedButton> buttons = [];
+                      if (characteristic.properties
+                          .contains(CharacteristicProperties.read)) {
+                        print('characteristic.uuid');
+                        print(characteristic.uuid);
+
+                        buttons.add(ElevatedButton(
+                          onPressed: () async {
+                            print("reading");
+                            widget._device.readData(
+                                service._serviceInfo.serviceUuid,
+                                characteristic.uuid);
+                          },
+                          child: const Text("Read"),
+                        ));
+                      }
+                      if (characteristic.properties
+                              .contains(CharacteristicProperties.write) ||
+                          characteristic.properties.contains(
+                              CharacteristicProperties.writeNoResponse)) {
+                        buttons.add(ElevatedButton(
+                          child: const Text("Write"),
+                          onPressed: () async {
+                            if (_deviceState != DeviceState.connected) {
+                              widget._device.connect(connectTimeout: 10000);
+                              await Future.delayed(Duration(seconds: 1), () {});
+                            }
+
+                            writeFunction() async {
+                              Uint8List data =
+                                  Uint8List.fromList([23, 44]); //32
+                              print('data: $data');
+                              fileString = '';
+                              widget._device.writeData(
+                                  service._serviceInfo.serviceUuid,
+                                  characteristic.uuid,
+                                  false,
+                                  data);
+                            }
+
+                            readFunction() async {
+                              print("reading");
+
+                              widget._device.readData(
+                                  service._serviceInfo.serviceUuid,
+                                  '586870fd-4a57-4eef-9c73-c1e65b4dd86e');
+                            }
+
+                            writeFunction();
+                          },
+                        ));
+                      }
+                      if (characteristic.properties
+                              .contains(CharacteristicProperties.notify) ||
+                          characteristic.properties
+                              .contains(CharacteristicProperties.indicate)) {
+                        buttons.add(ElevatedButton(
+                          child: const Text("Set Notify"),
+                          onPressed: () {
+                            showDialog<void>(
+                              context: context,
+                              builder: (BuildContext dialogContext) {
+                                return SimpleDialog(
+                                  title: const Text('Set Notify'),
+                                  children: <Widget>[
+                                    SimpleDialogOption(
+                                      child: const Text('Enable notify'),
+                                      onPressed: () {
+                                        widget._device
+                                            .setNotify(
+                                                service
+                                                    ._serviceInfo.serviceUuid,
+                                                characteristic.uuid,
+                                                true)
+                                            .then((value) {
+                                          if (value) {
+                                            Navigator.pop(dialogContext);
+                                          }
+                                        });
+                                      },
+                                    ),
+                                    SimpleDialogOption(
+                                      child: const Text('Disable notify'),
+                                      onPressed: () {
+                                        widget._device
+                                            .setNotify(
+                                                service
+                                                    ._serviceInfo.serviceUuid,
+                                                characteristic.uuid,
+                                                false)
+                                            .then((value) {
+                                          if (value) {
+                                            Navigator.pop(dialogContext);
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        ));
+                      }
+                      for (int i = 0;
+                          i < characteristic.properties.length;
+                          i++) {
+                        properties += characteristic.properties[i]
+                            .toString()
+                            .replaceAll(
+                                RegExp("CharacteristicProperties."), "");
+                        if (i < characteristic.properties.length - 1) {
+                          properties += ",";
+                        }
+                      }
+                      return FittedBox(
+                        fit: BoxFit.contain,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("Characteristic",
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold)),
+                            Row(
                               children: [
                                 const Text("UUID:",
                                     style: TextStyle(
                                         fontSize: 14, color: Colors.grey)),
-                                Text(service._serviceInfo.serviceUuid,
-                                    style: const TextStyle(fontSize: 14))
+                                Text(characteristic.uuid,
+                                    style: const TextStyle(fontSize: 14)),
                               ],
                             ),
-                          )
-                        ],
-                      );
-                    },
-                    body: Column(
-                      children: service._serviceInfo.characteristics
-                          .map((characteristic) {
-
-                            if('586870fd-4a57-4eef-9c73-c1e65b4dd86e'==characteristic.uuid){
-                              readService = characteristic;
-                            }
-
-
-                        String properties = "";
-                        List<ElevatedButton> buttons = [];
-                        if (characteristic.properties
-                            .contains(CharacteristicProperties.read)) {
-                          
-                          print('characteristic.uuid');
-                          print(characteristic.uuid);
-
-                          buttons.add(ElevatedButton(
-                            onPressed: () async {
-
-
-                                print("reading");
-                                  widget._device.readData(
-                                      service._serviceInfo.serviceUuid,
-                                      characteristic.uuid);
-
-
-
-
-
-                            },
-                            child: const Text("R ead"),
-                          ));
-                        }
-                        if (characteristic.properties
-                            .contains(CharacteristicProperties.write) ||
-                            characteristic.properties.contains(
-                                CharacteristicProperties.writeNoResponse)) {
-
-                          buttons.add(ElevatedButton(
-                            child: const Text("Wri te"),
-                            onPressed: () async {
-
-                              if(_deviceState != DeviceState.connected){
-
-                                widget._device.connect(connectTimeout: 10000);
-                                await Future.delayed(Duration(seconds: 1),(){});
-
-                              }
-
-                              writeFunction()async{
-                                Uint8List data =
-                                Uint8List.fromList([23,44]); //32
-                                print('data: $data');
-                                fileString = '';
-                                widget._device.writeData(
-                                    service._serviceInfo.serviceUuid,
-                                    characteristic.uuid,
-                                    false,
-                                    data);
-                              }
-
-
-                              readFunction()async{
-                                print("reading");
-
-                                widget._device.readData(
-                                    service._serviceInfo.serviceUuid,
-                                   '586870fd-4a57-4eef-9c73-c1e65b4dd86e');
-
-
-                              }
-
-                              writeFunction();
-
-
-
-
-
-
-                            },
-                          ));
-                        }
-                        if (characteristic.properties
-                            .contains(CharacteristicProperties.notify) ||
-                            characteristic.properties
-                                .contains(CharacteristicProperties.indicate)) {
-                          buttons.add(ElevatedButton(
-                            child: const Text("Set Notify"),
-                            onPressed: () {
-                              showDialog<void>(
-                                context: context,
-                                builder: (BuildContext dialogContext) {
-                                  return SimpleDialog(
-                                    title: const Text('Set Notify'),
-                                    children: <Widget>[
-                                      SimpleDialogOption(
-                                        child: const Text('Enable notify'),
-                                        onPressed: () {
-                                          widget._device
-                                              .setNotify(
-                                              service
-                                                  ._serviceInfo.serviceUuid,
-                                              characteristic.uuid,
-                                              true)
-                                              .then((value) {
-                                            if (value) {
-                                              Navigator.pop(dialogContext);
-                                            }
-                                          });
-                                        },
-                                      ),
-                                      SimpleDialogOption(
-                                        child: const Text('Disable notify'),
-                                        onPressed: () {
-                                          widget._device
-                                              .setNotify(
-                                              service
-                                                  ._serviceInfo.serviceUuid,
-                                              characteristic.uuid,
-                                              false)
-                                              .then((value) {
-                                            if (value) {
-                                              Navigator.pop(dialogContext);
-                                            }
-                                          });
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                          ));
-                        }
-                        for (int i = 0;
-                        i < characteristic.properties.length;
-                        i++) {
-                          properties += characteristic.properties[i]
-                              .toString()
-                              .replaceAll(
-                              RegExp("CharacteristicProperties."), "");
-                          if (i < characteristic.properties.length - 1) {
-                            properties += ",";
-                          }
-                        }
-                        return FittedBox(
-                          fit: BoxFit.contain,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text("Characteristic",
-                                  style: TextStyle(
-                                      fontSize: 16, fontWeight: FontWeight.bold)),
-                              Row(
-                                children: [
-                                  const Text("UUID:",
-                                      style: TextStyle(
-                                          fontSize: 14, color: Colors.grey)),
-                                  Text(characteristic.uuid,
-                                      style: const TextStyle(fontSize: 14)),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Text("Properties:",
-                                      style: TextStyle(
-                                          fontSize: 14, color: Colors.grey)),
-                                  Text(properties,
-                                      style: const TextStyle(fontSize: 14)),
-                                ],
-                              ),
-                              Row(
-                                children: buttons,
-                              ),
-                              characteristic.descriptors.isEmpty
-                                  ? const Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 0))
-                                  : FittedBox(
-                                  fit: BoxFit.contain,
-                                  child: Row(
-                                    children: [
-                                      const Padding(
-                                          padding: EdgeInsets.fromLTRB(
-                                              20, 0, 0, 0)),
-                                      Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            const Text("Descriptors:",
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                    FontWeight.bold)),
-                                            Column(
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                              children: characteristic
-                                                  .descriptors
-                                                  .map((descriptor) {
-                                                String descriptorType =
-                                                    "UnKnown";
-                                                switch (Platform.isAndroid
-                                                    ? descriptor.uuid
-                                                    .substring(4, 8)
-                                                    : descriptor.uuid) {
-                                                  case "2900":
-                                                    descriptorType =
-                                                    "Characteristic Extended Properties";
-                                                    break;
-                                                  case "2901":
-                                                    descriptorType =
-                                                    "Characteristic User Description";
-                                                    break;
-                                                  case "2902":
-                                                    descriptorType =
-                                                    "Client Characteristic Configuration";
-                                                    break;
-                                                  case "2903":
-                                                    descriptorType =
-                                                    "Server Characteristic Configuration";
-                                                    break;
-                                                  case "2904":
-                                                    descriptorType =
-                                                    "Characteristic Presentation Format";
-                                                    break;
-                                                  case "2905":
-                                                    descriptorType =
-                                                    "Characteristic Aggregate Format";
-                                                    break;
-                                                  case "2906":
-                                                    descriptorType =
-                                                    "Valid Range";
-                                                    break;
-                                                  case "2907":
-                                                    descriptorType =
-                                                    "External Report Reference Descriptor";
-                                                    break;
-                                                  case "2908":
-                                                    descriptorType =
-                                                    "Report Reference Descriptor";
-                                                    break;
-                                                }
-                                                return Column(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment
-                                                      .start,
-                                                  children: [
-                                                    Text(descriptorType,
-                                                        style: const TextStyle(
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                            FontWeight
-                                                                .bold)),
-                                                    Row(
-                                                      children: [
-                                                        const Text("UUID:",
-                                                            style: TextStyle(
-                                                                fontSize: 14,
-                                                                color: Colors
-                                                                    .grey)),
-                                                        Text(descriptor.uuid,
-                                                            style:
-                                                            const TextStyle(
-                                                                fontSize:
-                                                                14)),
-                                                      ],
-                                                    ),
-                                                    Row(children: [
-                                                      ElevatedButton(
-                                                        child: const Text(
-                                                            "Readd"),
-                                                        onPressed: () {
-                                                          widget._device.readDescriptorData(
-                                                              service
-                                                                  ._serviceInfo
-                                                                  .serviceUuid,
-                                                              characteristic
-                                                                  .uuid,
-                                                              descriptor
-                                                                  .uuid);
-                                                        },
+                            Row(
+                              children: [
+                                const Text("Properties:",
+                                    style: TextStyle(
+                                        fontSize: 14, color: Colors.grey)),
+                                Text(properties,
+                                    style: const TextStyle(fontSize: 14)),
+                              ],
+                            ),
+                            Row(
+                              children: buttons,
+                            ),
+                            characteristic.descriptors.isEmpty
+                                ? const Padding(
+                                    padding: EdgeInsets.fromLTRB(0, 10, 0, 0))
+                                : FittedBox(
+                                    fit: BoxFit.contain,
+                                    child: Row(
+                                      children: [
+                                        const Padding(
+                                            padding: EdgeInsets.fromLTRB(
+                                                20, 0, 0, 0)),
+                                        Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const Text("Descriptors:",
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: characteristic
+                                                    .descriptors
+                                                    .map((descriptor) {
+                                                  String descriptorType =
+                                                      "UnKnown";
+                                                  switch (Platform.isAndroid
+                                                      ? descriptor.uuid
+                                                          .substring(4, 8)
+                                                      : descriptor.uuid) {
+                                                    case "2900":
+                                                      descriptorType =
+                                                          "Characteristic Extended Properties";
+                                                      break;
+                                                    case "2901":
+                                                      descriptorType =
+                                                          "Characteristic User Description";
+                                                      break;
+                                                    case "2902":
+                                                      descriptorType =
+                                                          "Client Characteristic Configuration";
+                                                      break;
+                                                    case "2903":
+                                                      descriptorType =
+                                                          "Server Characteristic Configuration";
+                                                      break;
+                                                    case "2904":
+                                                      descriptorType =
+                                                          "Characteristic Presentation Format";
+                                                      break;
+                                                    case "2905":
+                                                      descriptorType =
+                                                          "Characteristic Aggregate Format";
+                                                      break;
+                                                    case "2906":
+                                                      descriptorType =
+                                                          "Valid Range";
+                                                      break;
+                                                    case "2907":
+                                                      descriptorType =
+                                                          "External Report Reference Descriptor";
+                                                      break;
+                                                    case "2908":
+                                                      descriptorType =
+                                                          "Report Reference Descriptor";
+                                                      break;
+                                                  }
+                                                  return Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(descriptorType,
+                                                          style: const TextStyle(
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold)),
+                                                      Row(
+                                                        children: [
+                                                          const Text("UUID:",
+                                                              style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors
+                                                                      .grey)),
+                                                          Text(descriptor.uuid,
+                                                              style:
+                                                                  const TextStyle(
+                                                                      fontSize:
+                                                                          14)),
+                                                        ],
                                                       ),
-                                                      descriptorType ==
-                                                          "Client Characteristic Configuration"
-                                                          ? ElevatedButton(
-                                                        child:
-                                                        const Text(
-                                                            "Write _: "),
-                                                        onPressed: () {
-                                                          showDialog<
-                                                              void>(
-                                                            context:
-                                                            context,
-                                                            builder:
-                                                                (BuildContext
-                                                            dialogContext) {
-                                                              return SimpleDialog(
-                                                                title: const Text(
-                                                                    'Send'),
-                                                                children: <
-                                                                    Widget>[
-                                                                  TextField(
-                                                                    autofocus:
-                                                                    true,
-                                                                    controller:
-                                                                    _sendDataTextController,
-                                                                    decoration:
-                                                                    const InputDecoration(
-                                                                      hintText: "Enter hexadecimal,such as FED10101",
-                                                                    ),
-                                                                  ),
-                                                                  TextButton(
-                                                                    child:
-                                                                    const Text("Send"),
-                                                                    onPressed:
-                                                                        () {
-                                                                      String dataStr = _sendDataTextController.text;
-                                                                      Uint8List data = Uint8List(dataStr.length ~/ 2);
-                                                                      for (int i = 0; i < dataStr.length ~/ 2; i++) {
-                                                                        data[i] = int.parse(dataStr.substring(i * 2, i * 2 + 2), radix: 16);
-                                                                      }
-                                                                      widget._device.writeDescriptorData(service._serviceInfo.serviceUuid, characteristic.uuid, descriptor.uuid, data);
-                                                                      _sendDataTextController.clear();
-                                                                      Navigator.pop(dialogContext);
+                                                      Row(children: [
+                                                        ElevatedButton(
+                                                          child: const Text(
+                                                              "Readd"),
+                                                          onPressed: () {
+                                                            widget._device.readDescriptorData(
+                                                                service
+                                                                    ._serviceInfo
+                                                                    .serviceUuid,
+                                                                characteristic
+                                                                    .uuid,
+                                                                descriptor
+                                                                    .uuid);
+                                                          },
+                                                        ),
+                                                        descriptorType ==
+                                                                "Client Characteristic Configuration"
+                                                            ? ElevatedButton(
+                                                                child: const Text(
+                                                                    "Write _: "),
+                                                                onPressed: () {
+                                                                  showDialog<
+                                                                      void>(
+                                                                    context:
+                                                                        context,
+                                                                    builder:
+                                                                        (BuildContext
+                                                                            dialogContext) {
+                                                                      return SimpleDialog(
+                                                                        title: const Text(
+                                                                            'Send'),
+                                                                        children: <
+                                                                            Widget>[
+                                                                          TextField(
+                                                                            autofocus:
+                                                                                true,
+                                                                            controller:
+                                                                                _sendDataTextController,
+                                                                            decoration:
+                                                                                const InputDecoration(
+                                                                              hintText: "Enter hexadecimal,such as FED10101",
+                                                                            ),
+                                                                          ),
+                                                                          TextButton(
+                                                                            child:
+                                                                                const Text("Send"),
+                                                                            onPressed:
+                                                                                () {
+                                                                              String dataStr = _sendDataTextController.text;
+                                                                              Uint8List data = Uint8List(dataStr.length ~/ 2);
+                                                                              for (int i = 0; i < dataStr.length ~/ 2; i++) {
+                                                                                data[i] = int.parse(dataStr.substring(i * 2, i * 2 + 2), radix: 16);
+                                                                              }
+                                                                              widget._device.writeDescriptorData(service._serviceInfo.serviceUuid, characteristic.uuid, descriptor.uuid, data);
+                                                                              _sendDataTextController.clear();
+                                                                              Navigator.pop(dialogContext);
+                                                                            },
+                                                                          )
+                                                                        ],
+                                                                      );
                                                                     },
-                                                                  )
-                                                                ],
-                                                              );
-                                                            },
-                                                          );
-                                                        },
-                                                      )
-                                                          : const Padding(
-                                                        padding:
-                                                        EdgeInsets
-                                                            .fromLTRB(
-                                                            0,
-                                                            0,
-                                                            0,
-                                                            0),
-                                                      )
-                                                    ]),
-                                                  ],
-                                                );
-                                              }).toList(),
-                                            )
-                                          ]),
-                                    ],
-                                  )),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    isExpanded: service._isExpanded);
-
-
-
+                                                                  );
+                                                                },
+                                                              )
+                                                            : const Padding(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .fromLTRB(
+                                                                            0,
+                                                                            0,
+                                                                            0,
+                                                                            0),
+                                                              )
+                                                      ]),
+                                                    ],
+                                                  );
+                                                }).toList(),
+                                              )
+                                            ]),
+                                      ],
+                                    )),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  isExpanded: service._isExpanded);
             }).toList())
       ]),
     );

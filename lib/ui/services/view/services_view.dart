@@ -25,6 +25,7 @@ class _ServicesViewState extends State<ServicesView> {
     super.initState();
     controller.device = widget.device;
     controller.listensToService();
+    controller.listenToIncomingData();
   }
 
   @override

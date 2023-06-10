@@ -2,17 +2,26 @@ import 'package:ble/ui/home/controller/home_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_elves/flutter_blue_elves.dart';
 import 'package:get/get.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({Key? key}) : super(key: key);
-
+  HomeView({required this.device, Key? key}) : super(key: key);
+  Device device;
   @override
   State<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
   HomeController controller = Get.put(HomeController());
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    controller.device = widget.device;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +48,11 @@ class _HomeViewState extends State<HomeView> {
                   ],
                 ),
               )
-            : GestureDetector(onTap: () {}, child: Icon(Icons.arrow_back))),
+            : GestureDetector(
+                onTap: () {
+                  Get.back();
+                },
+                child: Icon(Icons.arrow_back))),
       ),
       body: Padding(
         padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
