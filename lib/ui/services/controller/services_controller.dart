@@ -10,14 +10,19 @@ import 'package:path_provider/path_provider.dart';
 
 class ServicesController extends GetxController {
   Device? device;
-  Rx<List<BleService>> servicesInfo = Rx([]);
+  List<BleService> servicesInfo = [];
   final TextEditingController sendDataTextController = TextEditingController();
   StreamSubscription<DeviceSignalResult>? deviceSignalResultStream;
+
+  BleService? selectedService;
+
+  BleCharacteristic? selectedCharacteristic;
 
   void listensToService() {
     ///use this stream to listen discovery result
     device!.serviceDiscoveryStream.listen((serviceItem) {
-      servicesInfo.value.add(serviceItem);
+      servicesInfo.add(serviceItem);
+      update(['available_services_view_id']);
     });
     device!.discoveryService();
   }
@@ -67,34 +72,52 @@ class ServicesController extends GetxController {
     ));
   }
 
-  writeFile(Uint8List data) async {
-    var tempPath = await getApplicationDocumentsDirectory();
+  // writeFile(Uint8List data)
+  writeFile(String data) async {
+    var tempPath = await getExternalStorageDirectory();
 
-    String filePath = tempPath.path + '/file1';
+    String filePath = tempPath!.path + '/file1.csv';
     final file = File(filePath);
-    file.writeAsBytesSync(data);
+    print('file data ${data.toString()}');
+    file.writeAsStringSync(data);
     //file.writeAsString('bytes');
     // Write the file
     print("file store in ${file.path}");
   }
 
   void listenToIncomingData() {
+    String data = "";
     deviceSignalResultStream =
         device!.deviceSignalResultStream.listen((event) async {
       print('new data 22');
       print(event.data);
 
       // String? data;
-      List<int> bytes = [];
-      List<Uint8List> data = [];
-      BytesBuilder bytesBuilder = BytesBuilder();
+      // List<int> bytes = [];
+      // List<Uint8List> data = [];
+      // BytesBuilder bytesBuilder = BytesBuilder();
 
       if (event.data != null && event.data!.isNotEmpty) {
         if (event.data?.length == 1 && event.data![0] == 32) {
           print('file recieved ');
-          writeFile(bytesBuilder.toBytes());
+          // writeFile(bytesBuilder.toBytes());
+          writeFile(data);
         } else {
-          bytesBuilder.add(event.data!);
+          for (int i = 0; i < event.data!.length; i++) {
+            String currentStr = event.data![i].toString();
+
+            if (currentStr.length < 2) {
+              currentStr = "0" + currentStr;
+            }
+            String asciiString = String.fromCharCode(int.parse(currentStr));
+
+            data = data + asciiString;
+          }
+          if (selectedService != null && selectedCharacteristic != null) {
+            device!.readData(
+                selectedService!.serviceUuid, selectedCharacteristic!.uuid);
+          }
+          // bytesBuilder.add(event.data!);
         }
       }
 

@@ -1,3 +1,4 @@
+import 'package:ble/ui/home/view/home_view.dart';
 import 'package:ble/ui/services/view/services_view.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter_blue_elves/flutter_blue_elves.dart';
@@ -8,7 +9,7 @@ class BluetoothConnectionsController extends GetxController {
 
   Rx<bool> isScanning = Rx(false);
 
-  Rx<List<ScanResult>> scanResults = Rx([]);
+  List<ScanResult> scanResults = [];
 
   scanForDevices() {
     animationController!.repeat();
@@ -24,11 +25,12 @@ class BluetoothConnectionsController extends GetxController {
           ? "The user agrees to turn on the Bluetooth function"
           : "The user does not agrees to turn on the Bluetooth function");
     });
-    scanResults.value = [];
+    scanResults = [];
     isScanning.value = true;
     FlutterBlueElves.instance.startScan(5000).listen((scanItem) {
       print(scanItem.macAddress);
-      scanResults.value.add(scanItem);
+      scanResults.add(scanItem);
+      update(['available_bluetooth_devices_view_id']);
       print(scanItem.uuids);
       print(scanItem.name ?? 'device');
 
@@ -54,7 +56,7 @@ class BluetoothConnectionsController extends GetxController {
 
     device.stateStream.listen((event) {
       if (event == DeviceState.connected) {
-        Get.to(ServicesView(
+        Get.to(HomeView(
           device: device,
         ));
       }
@@ -66,10 +68,10 @@ class BluetoothConnectionsController extends GetxController {
     // }).onDone(() {
     //   ///if scan timeout or you stop scan,will into this
     // });]
-    if (device.state == DeviceState.connected) {
-      Get.to(ServicesView(
-        device: device,
-      ));
-    }
+    // if (device.state == DeviceState.connected) {
+    //   Get.to(ServicesView(
+    //     device: device,
+    //   ));
+    // }
   }
 }

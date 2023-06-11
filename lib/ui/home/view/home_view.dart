@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ble/ui/home/controller/home_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,6 +22,9 @@ class _HomeViewState extends State<HomeView> {
     // TODO: implement initState
     super.initState();
     controller.device = widget.device;
+    controller.listenToIncomingData();
+    controller.listensToService();
+    // controller.writeFunction();
   }
 
   @override
@@ -58,72 +63,29 @@ class _HomeViewState extends State<HomeView> {
         padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
         child: SingleChildScrollView(
           child: Obx(
-            () => !controller.isMainFolderSeleceted.value
-                ? Wrap(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          controller.isMainFolderSeleceted.value = true;
-                          controller.mainSelectedFolder.value = 1;
-                        },
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.folder,
-                              size: MediaQuery.of(context).size.width * 0.3,
-                              color: Color(0xff606268),
-                            ),
-                            SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                child: const Text(
-                                  'MainFolder 1',
-                                  maxLines: 2,
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(color: Colors.black),
-                                ))
-                          ],
-                        ),
+            () => controller.isFileLoading.value
+                ? Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(),
+                          Text('Fetching files...'),
+                        ],
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          controller.isMainFolderSeleceted.value = true;
-                          controller.mainSelectedFolder.value = 2;
-                        },
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.folder,
-                              size: MediaQuery.of(context).size.width * 0.3,
-                              color: Color(0xff606268),
-                            ),
-                            SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                child: const Text(
-                                  'MainFolder 2',
-                                  maxLines: 2,
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(color: Colors.black),
-                                ))
-                          ],
-                        ),
-                      ),
-                    ],
+                    ),
                   )
-                : !controller.isSubFolderSelected.value
+                : !controller.isMainFolderSeleceted.value
                     ? Wrap(
                         children: [
                           GestureDetector(
                             onTap: () {
-                              controller.isSubFolderSelected.value = true;
-                              controller.subSelectedFolder.value = 1;
+                              controller.isMainFolderSeleceted.value = true;
+                              controller.mainSelectedFolder.value = 1;
                             },
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
@@ -139,7 +101,7 @@ class _HomeViewState extends State<HomeView> {
                                     width:
                                         MediaQuery.of(context).size.width * 0.3,
                                     child: const Text(
-                                      'SubFolder 1',
+                                      'MainFolder 1',
                                       maxLines: 2,
                                       textAlign: TextAlign.center,
                                       overflow: TextOverflow.ellipsis,
@@ -150,8 +112,8 @@ class _HomeViewState extends State<HomeView> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              controller.isSubFolderSelected.value = true;
-                              controller.subSelectedFolder.value = 2;
+                              controller.isMainFolderSeleceted.value = true;
+                              controller.mainSelectedFolder.value = 2;
                             },
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
@@ -167,35 +129,7 @@ class _HomeViewState extends State<HomeView> {
                                     width:
                                         MediaQuery.of(context).size.width * 0.3,
                                     child: const Text(
-                                      'SubFolder 2',
-                                      maxLines: 2,
-                                      textAlign: TextAlign.center,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(color: Colors.black),
-                                    ))
-                              ],
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              controller.isSubFolderSelected.value = true;
-                              controller.subSelectedFolder.value = 3;
-                            },
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.folder,
-                                  size: MediaQuery.of(context).size.width * 0.3,
-                                  color: Color(0xff606268),
-                                ),
-                                SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.3,
-                                    child: const Text(
-                                      'SubFolder 3',
+                                      'MainFolder 2',
                                       maxLines: 2,
                                       textAlign: TextAlign.center,
                                       overflow: TextOverflow.ellipsis,
@@ -206,66 +140,167 @@ class _HomeViewState extends State<HomeView> {
                           ),
                         ],
                       )
-                    : Wrap(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              // controller.isMainFolderSeleceted.value = true;
-                              // controller.mainSelectedFolder.value = 1;
-                            },
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  CupertinoIcons.doc,
-                                  size: MediaQuery.of(context).size.width * 0.3,
-                                  color: Color(0xff606268),
+                    : !controller.isSubFolderSelected.value
+                        ? Wrap(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  controller.isSubFolderSelected.value = true;
+                                  controller.subSelectedFolder.value = 1;
+                                },
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.folder,
+                                      size: MediaQuery.of(context).size.width *
+                                          0.3,
+                                      color: Color(0xff606268),
+                                    ),
+                                    SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.3,
+                                        child: const Text(
+                                          'SubFolder 1',
+                                          maxLines: 2,
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(color: Colors.black),
+                                        ))
+                                  ],
                                 ),
-                                SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.3,
-                                    child: const Text(
-                                      'File 1',
-                                      maxLines: 2,
-                                      textAlign: TextAlign.center,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(color: Colors.black),
-                                    ))
-                              ],
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              // controller.isMainFolderSeleceted.value = true;
-                              // controller.mainSelectedFolder.value = 2;
-                            },
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  CupertinoIcons.doc,
-                                  size: MediaQuery.of(context).size.width * 0.3,
-                                  color: Color(0xff606268),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  controller.isSubFolderSelected.value = true;
+                                  controller.subSelectedFolder.value = 2;
+                                },
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.folder,
+                                      size: MediaQuery.of(context).size.width *
+                                          0.3,
+                                      color: Color(0xff606268),
+                                    ),
+                                    SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.3,
+                                        child: const Text(
+                                          'SubFolder 2',
+                                          maxLines: 2,
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(color: Colors.black),
+                                        ))
+                                  ],
                                 ),
-                                SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.3,
-                                    child: const Text(
-                                      'File 2',
-                                      maxLines: 2,
-                                      textAlign: TextAlign.center,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(color: Colors.black),
-                                    ))
-                              ],
-                            ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  controller.isSubFolderSelected.value = true;
+                                  controller.subSelectedFolder.value = 3;
+                                },
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.folder,
+                                      size: MediaQuery.of(context).size.width *
+                                          0.3,
+                                      color: Color(0xff606268),
+                                    ),
+                                    SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.3,
+                                        child: const Text(
+                                          'SubFolder 3',
+                                          maxLines: 2,
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(color: Colors.black),
+                                        ))
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )
+                        : Wrap(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  // controller.isMainFolderSeleceted.value = true;
+                                  // controller.mainSelectedFolder.value = 1;
+                                  controller
+                                      .writeFile(controller.fileData.value[0]);
+                                },
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      CupertinoIcons.doc,
+                                      size: MediaQuery.of(context).size.width *
+                                          0.3,
+                                      color: Color(0xff606268),
+                                    ),
+                                    SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.3,
+                                        child: const Text(
+                                          'File 1',
+                                          maxLines: 2,
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(color: Colors.black),
+                                        ))
+                                  ],
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  // controller.isMainFolderSeleceted.value = true;
+                                  // controller.mainSelectedFolder.value = 2;
+                                },
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      CupertinoIcons.doc,
+                                      size: MediaQuery.of(context).size.width *
+                                          0.3,
+                                      color: Color(0xff606268),
+                                    ),
+                                    SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.3,
+                                        child: const Text(
+                                          'File 2',
+                                          maxLines: 2,
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(color: Colors.black),
+                                        ))
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
           ),
         ),
       ),

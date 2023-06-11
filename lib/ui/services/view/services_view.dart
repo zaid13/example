@@ -35,8 +35,11 @@ class _ServicesViewState extends State<ServicesView> {
         title: const Text('Bluetooth'),
         centerTitle: true,
       ),
-      body: Obx(() => ListView.builder(
-            itemCount: controller.servicesInfo.value.length,
+      body: GetBuilder<ServicesController>(
+        id: "available_services_view_id",
+        builder: (controller) {
+          return ListView.builder(
+            itemCount: controller.servicesInfo.length,
             itemBuilder: (context, index) {
               return Container(
                 child: Padding(
@@ -45,19 +48,18 @@ class _ServicesViewState extends State<ServicesView> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        controller.getServiceName(
-                            controller.servicesInfo.value[index]),
+                        controller
+                            .getServiceName(controller.servicesInfo[index]),
                         style: TextStyle(
                             color: Colors.black, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        controller.servicesInfo.value[index].serviceUuid,
+                        controller.servicesInfo[index].serviceUuid,
                         style: TextStyle(
                             color: Colors.black, fontWeight: FontWeight.bold),
                       ),
                       Column(
-                        children: controller
-                            .servicesInfo.value[index].characteristics
+                        children: controller.servicesInfo[index].characteristics
                             .map((characteristic) {
                           if ('586870fd-4a57-4eef-9c73-c1e65b4dd86e' ==
                               characteristic.uuid) {
@@ -73,9 +75,12 @@ class _ServicesViewState extends State<ServicesView> {
                             buttons.add(ElevatedButton(
                               onPressed: () async {
                                 print("reading");
+                                controller.selectedService =
+                                    controller.servicesInfo[index];
+                                controller.selectedCharacteristic =
+                                    characteristic;
                                 controller.device!.readData(
-                                    controller
-                                        .servicesInfo.value[index].serviceUuid,
+                                    controller.servicesInfo[index].serviceUuid,
                                     characteristic.uuid);
                               },
                               child: const Text("Read"),
@@ -89,7 +94,7 @@ class _ServicesViewState extends State<ServicesView> {
                               child: const Text("Write"),
                               onPressed: () async {
                                 controller.callWriteSerivce(
-                                    controller.servicesInfo.value[index],
+                                    controller.servicesInfo[index],
                                     characteristic);
                               },
                             ));
@@ -113,8 +118,7 @@ class _ServicesViewState extends State<ServicesView> {
                                             controller.device!
                                                 .setNotify(
                                                     controller
-                                                        .servicesInfo
-                                                        .value[index]
+                                                        .servicesInfo[index]
                                                         .serviceUuid,
                                                     characteristic.uuid,
                                                     true)
@@ -131,8 +135,7 @@ class _ServicesViewState extends State<ServicesView> {
                                             controller.device!
                                                 .setNotify(
                                                     controller
-                                                        .servicesInfo
-                                                        .value[index]
+                                                        .servicesInfo[index]
                                                         .serviceUuid,
                                                     characteristic.uuid,
                                                     false)
@@ -296,8 +299,7 @@ class _ServicesViewState extends State<ServicesView> {
                                                               onPressed: () {
                                                                 controller.device!.readDescriptorData(
                                                                     controller
-                                                                        .servicesInfo
-                                                                        .value[
+                                                                        .servicesInfo[
                                                                             index]
                                                                         .serviceUuid,
                                                                     characteristic
@@ -339,7 +341,7 @@ class _ServicesViewState extends State<ServicesView> {
                                                                                   for (int i = 0; i < dataStr.length ~/ 2; i++) {
                                                                                     data[i] = int.parse(dataStr.substring(i * 2, i * 2 + 2), radix: 16);
                                                                                   }
-                                                                                  controller.device!.writeDescriptorData(controller.servicesInfo.value[index].serviceUuid, characteristic.uuid, descriptor.uuid, data);
+                                                                                  controller.device!.writeDescriptorData(controller.servicesInfo[index].serviceUuid, characteristic.uuid, descriptor.uuid, data);
                                                                                   controller.sendDataTextController.clear();
                                                                                   Navigator.pop(dialogContext);
                                                                                 },
@@ -376,7 +378,9 @@ class _ServicesViewState extends State<ServicesView> {
                 ),
               );
             },
-          )),
+          );
+        },
+      ),
     );
   }
 }
