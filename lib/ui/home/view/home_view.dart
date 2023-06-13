@@ -241,8 +241,41 @@ class _HomeViewState extends State<HomeView> {
                                 onTap: () {
                                   // controller.isMainFolderSeleceted.value = true;
                                   // controller.mainSelectedFolder.value = 1;
-                                  controller
-                                      .writeFile(controller.fileData.value[0]);
+                                  if (controller.subSelectedFolder.value == 1) {
+                                    controller.writeFile(
+                                        controller.fileData.value[controller
+                                                    .mainSelectedFolder.value ==
+                                                1
+                                            ? 0
+                                            : 6],
+                                        controller.mainSelectedFolder.value == 1
+                                            ? 0
+                                            : 6);
+                                  } else if (controller
+                                          .subSelectedFolder.value ==
+                                      2) {
+                                    controller.writeFile(
+                                        controller.fileData.value[controller
+                                                    .mainSelectedFolder.value ==
+                                                1
+                                            ? 2
+                                            : 8],
+                                        controller.mainSelectedFolder.value == 1
+                                            ? 2
+                                            : 8);
+                                  } else if (controller
+                                          .subSelectedFolder.value ==
+                                      3) {
+                                    controller.writeFile(
+                                        controller.fileData.value[controller
+                                                    .mainSelectedFolder.value ==
+                                                1
+                                            ? 4
+                                            : 10],
+                                        controller.mainSelectedFolder.value == 1
+                                            ? 4
+                                            : 10);
+                                  }
                                 },
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -271,6 +304,41 @@ class _HomeViewState extends State<HomeView> {
                               ),
                               GestureDetector(
                                 onTap: () {
+                                  if (controller.subSelectedFolder.value == 1) {
+                                    controller.writeFile(
+                                        controller.fileData.value[controller
+                                                    .mainSelectedFolder.value ==
+                                                1
+                                            ? 1
+                                            : 7],
+                                        controller.mainSelectedFolder.value == 1
+                                            ? 1
+                                            : 7);
+                                  } else if (controller
+                                          .subSelectedFolder.value ==
+                                      2) {
+                                    controller.writeFile(
+                                        controller.fileData.value[controller
+                                                    .mainSelectedFolder.value ==
+                                                1
+                                            ? 3
+                                            : 9],
+                                        controller.mainSelectedFolder.value == 1
+                                            ? 3
+                                            : 9);
+                                  } else if (controller
+                                          .subSelectedFolder.value ==
+                                      3) {
+                                    controller.writeFile(
+                                        controller.fileData.value[controller
+                                                    .mainSelectedFolder.value ==
+                                                1
+                                            ? 5
+                                            : 11],
+                                        controller.mainSelectedFolder.value == 1
+                                            ? 5
+                                            : 11);
+                                  }
                                   // controller.isMainFolderSeleceted.value = true;
                                   // controller.mainSelectedFolder.value = 2;
                                 },

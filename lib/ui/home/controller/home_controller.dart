@@ -19,8 +19,13 @@ class HomeController extends GetxController {
   String readCharacteristicUUID = '586870fd-4a57-4eef-9c73-c1e65b4dd86b';
   String writeCharacteristicUUID = '586870fd-4a57-4eef-9c73-c1e65b4dd86c';
 
+  BleCharacteristic? selectedWriteCharacteristic;
+  BleService? selectedService;
+
   Rx<bool> isFileLoading = Rx(true);
   Rx<List<String>> fileData = Rx([]);
+
+  int i = 0;
 
   StreamSubscription<DeviceSignalResult>? deviceSignalResultStream;
 
@@ -32,6 +37,8 @@ class HomeController extends GetxController {
       if (serviceItem.serviceUuid == serviceUUID) {
         serviceItem.characteristics.forEach((characteristic) {
           if (characteristic.uuid == writeCharacteristicUUID) {
+            selectedService = serviceItem;
+            selectedWriteCharacteristic = characteristic;
             callWriteSerivce(serviceItem, characteristic);
           }
         });
@@ -59,10 +66,12 @@ class HomeController extends GetxController {
     });
   }
 
-  writeFile(String data) async {
+  writeFile(String data, int fileIndex) async {
     var tempPath = await getExternalStorageDirectory();
 
-    String filePath = tempPath!.path + '/file1.csv';
+    String fileFinalPath = '/file$fileIndex.csv';
+
+    String filePath = tempPath!.path + fileFinalPath;
     final file = File(filePath);
     print('file data ${data.toString()}');
     file.writeAsStringSync(data);
@@ -95,7 +104,13 @@ class HomeController extends GetxController {
           // writeFile(bytesBuilder.toBytes());
           // writeFile(data);
           fileData.value.add(data);
-          isFileLoading.value = false;
+          if (i < 12) {
+            i++;
+            callWriteSerivce(selectedService!, selectedWriteCharacteristic!);
+          } else {
+            i = 0;
+            isFileLoading.value = false;
+          }
         } else {
           for (int i = 0; i < event.data!.length; i++) {
             String currentStr = event.data![i].toString();
