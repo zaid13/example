@@ -25,7 +25,7 @@ class HomeController extends GetxController {
   Rx<bool> isFileLoading = Rx(true);
   Rx<List<String>> fileData = Rx([]);
 
-  int i = 0;
+  int fileIndex = 0;
 
   StreamSubscription<DeviceSignalResult>? deviceSignalResultStream;
 
@@ -58,7 +58,7 @@ class HomeController extends GetxController {
   }
 
   writeFunction(BleService service, BleCharacteristic characteristic) async {
-    Uint8List data = Uint8List.fromList([23, 44]); //32
+    Uint8List data = Uint8List.fromList([fileIndex]); //32
     print('data: $data');
     device!.writeData(service.serviceUuid, characteristic.uuid, false, data);
     Future.delayed(Duration(seconds: 2)).then((value) {
@@ -104,11 +104,11 @@ class HomeController extends GetxController {
           // writeFile(bytesBuilder.toBytes());
           // writeFile(data);
           fileData.value.add(data);
-          if (i < 12) {
-            i++;
+          if (fileIndex < 12) {
+            fileIndex++;
             callWriteSerivce(selectedService!, selectedWriteCharacteristic!);
           } else {
-            i = 0;
+            fileIndex = 0;
             isFileLoading.value = false;
           }
         } else {
