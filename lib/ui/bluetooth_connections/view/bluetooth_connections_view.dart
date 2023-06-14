@@ -22,7 +22,9 @@ class _BluetoothConnectionViewState extends State<BluetoothConnectionView>
       duration: const Duration(milliseconds: 5000),
       vsync: this,
     );
+
     controller.scanForDevices();
+
     super.initState();
   }
 
