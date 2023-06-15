@@ -1,3 +1,4 @@
+import 'package:ble/constants/style/style.dart';
 import 'package:ble/ui/bluetooth_connections/controller/bluetooth_connections_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -31,9 +32,26 @@ class _BluetoothConnectionViewState extends State<BluetoothConnectionView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bgColor,
       appBar: AppBar(
-        title: const Text('Bluetooth'),
+        backgroundColor: mainColor,
+        title: const Text(
+          'Bluetooth',
+          style: TextStyle(color: headingColor),
+        ),
         centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: GestureDetector(
+              onTap: () {},
+              child: Icon(
+                Icons.settings,
+                color: headingColor,
+              ),
+            ),
+          )
+        ],
       ),
       body: Column(
         children: [
@@ -53,7 +71,7 @@ class _BluetoothConnectionViewState extends State<BluetoothConnectionView>
                 const Text(
                   'AVAILABLE DEVICES',
                   style: TextStyle(
-                    color: Colors.black,
+                    color: secondaryColor,
                     fontSize: 16,
                   ),
                 ),
@@ -63,7 +81,7 @@ class _BluetoothConnectionViewState extends State<BluetoothConnectionView>
                   },
                   child: Container(
                     decoration: const BoxDecoration(
-                      color: Colors.black12,
+                      color: mainColor,
                       shape: BoxShape.circle,
                     ),
                     child: Padding(
@@ -74,7 +92,7 @@ class _BluetoothConnectionViewState extends State<BluetoothConnectionView>
                               .animate(controller.animationController!),
                           child: const Icon(
                             Icons.rotate_left,
-                            color: Colors.black,
+                            color: secondaryColor,
                             size: 35,
                           ),
                         ),
@@ -100,8 +118,9 @@ class _BluetoothConnectionViewState extends State<BluetoothConnectionView>
                                 controller.scanResults[index]);
                           },
                           child: Container(
+                            height: 60,
                             decoration: const BoxDecoration(
-                              color: Colors.black12,
+                              color: mainColor,
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10)),
                             ),
@@ -109,8 +128,10 @@ class _BluetoothConnectionViewState extends State<BluetoothConnectionView>
                               padding: const EdgeInsets.all(5),
                               child: Center(
                                 child: Text(
-                                    controller.scanResults[index].name ??
-                                        'Device $index'),
+                                  controller.scanResults[index].name ??
+                                      'Device $index',
+                                  style: TextStyle(color: secondaryColor),
+                                ),
                               ),
                             ),
                           ),

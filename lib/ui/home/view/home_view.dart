@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ble/constants/style/style.dart';
 import 'package:ble/ui/home/controller/home_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/cupertino.dart';
@@ -30,8 +31,27 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bgColor,
       appBar: AppBar(
-        title: const Text('Bluetooth'),
+        backgroundColor: mainColor,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: GestureDetector(
+              onTap: () {},
+              child: Icon(
+                Icons.settings,
+                color: headingColor,
+              ),
+            ),
+          )
+        ],
+        title: const Text(
+          'Bluetooth',
+          style: TextStyle(
+            color: headingColor,
+          ),
+        ),
         centerTitle: true,
         leading: Obx(() => controller.isSubFolderSelected.value ||
                 controller.isMainFolderSeleceted.value
@@ -46,10 +66,16 @@ class _HomeViewState extends State<HomeView> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.arrow_back_ios_new),
-                    Text(controller.isSubFolderSelected.value
-                        ? 'SubFolder ${controller.subSelectedFolder.value}'
-                        : 'MainFolder ${controller.mainSelectedFolder.value}')
+                    Icon(
+                      Icons.arrow_back_ios_new,
+                      color: headingColor,
+                    ),
+                    Text(
+                      controller.isSubFolderSelected.value
+                          ? 'SubFolder ${controller.subSelectedFolder.value}'
+                          : 'MainFolder ${controller.mainSelectedFolder.value}',
+                      style: TextStyle(color: headingColor),
+                    )
                   ],
                 ),
               )
@@ -57,7 +83,10 @@ class _HomeViewState extends State<HomeView> {
                 onTap: () {
                   Get.back();
                 },
-                child: Icon(Icons.arrow_back))),
+                child: Icon(
+                  Icons.arrow_back,
+                  color: headingColor,
+                ))),
       ),
       body: Padding(
         padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
@@ -73,8 +102,13 @@ class _HomeViewState extends State<HomeView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          CircularProgressIndicator(),
-                          Text('Fetching files...'),
+                          CircularProgressIndicator(
+                            color: mainColor,
+                          ),
+                          Text(
+                            'Fetching files...',
+                            style: TextStyle(color: secondaryColor),
+                          ),
                         ],
                       ),
                     ),
@@ -95,7 +129,7 @@ class _HomeViewState extends State<HomeView> {
                                 Icon(
                                   Icons.folder,
                                   size: MediaQuery.of(context).size.width * 0.3,
-                                  color: Color(0xff606268),
+                                  color: secondaryColor,
                                 ),
                                 SizedBox(
                                     width:
@@ -105,7 +139,7 @@ class _HomeViewState extends State<HomeView> {
                                       maxLines: 2,
                                       textAlign: TextAlign.center,
                                       overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: secondaryColor),
                                     ))
                               ],
                             ),
@@ -123,7 +157,7 @@ class _HomeViewState extends State<HomeView> {
                                 Icon(
                                   Icons.folder,
                                   size: MediaQuery.of(context).size.width * 0.3,
-                                  color: Color(0xff606268),
+                                  color: secondaryColor,
                                 ),
                                 SizedBox(
                                     width:
@@ -133,7 +167,7 @@ class _HomeViewState extends State<HomeView> {
                                       maxLines: 2,
                                       textAlign: TextAlign.center,
                                       overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: secondaryColor),
                                     ))
                               ],
                             ),
@@ -157,7 +191,7 @@ class _HomeViewState extends State<HomeView> {
                                       Icons.folder,
                                       size: MediaQuery.of(context).size.width *
                                           0.3,
-                                      color: Color(0xff606268),
+                                      color: secondaryColor,
                                     ),
                                     SizedBox(
                                         width:
@@ -168,7 +202,8 @@ class _HomeViewState extends State<HomeView> {
                                           maxLines: 2,
                                           textAlign: TextAlign.center,
                                           overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(color: Colors.black),
+                                          style:
+                                              TextStyle(color: secondaryColor),
                                         ))
                                   ],
                                 ),
@@ -187,7 +222,7 @@ class _HomeViewState extends State<HomeView> {
                                       Icons.folder,
                                       size: MediaQuery.of(context).size.width *
                                           0.3,
-                                      color: Color(0xff606268),
+                                      color: secondaryColor,
                                     ),
                                     SizedBox(
                                         width:
@@ -198,7 +233,8 @@ class _HomeViewState extends State<HomeView> {
                                           maxLines: 2,
                                           textAlign: TextAlign.center,
                                           overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(color: Colors.black),
+                                          style:
+                                              TextStyle(color: secondaryColor),
                                         ))
                                   ],
                                 ),
@@ -217,7 +253,7 @@ class _HomeViewState extends State<HomeView> {
                                       Icons.folder,
                                       size: MediaQuery.of(context).size.width *
                                           0.3,
-                                      color: Color(0xff606268),
+                                      color: secondaryColor,
                                     ),
                                     SizedBox(
                                         width:
@@ -228,7 +264,8 @@ class _HomeViewState extends State<HomeView> {
                                           maxLines: 2,
                                           textAlign: TextAlign.center,
                                           overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(color: Colors.black),
+                                          style:
+                                              TextStyle(color: secondaryColor),
                                         ))
                                   ],
                                 ),
@@ -286,7 +323,7 @@ class _HomeViewState extends State<HomeView> {
                                       CupertinoIcons.doc,
                                       size: MediaQuery.of(context).size.width *
                                           0.3,
-                                      color: Color(0xff606268),
+                                      color: secondaryColor,
                                     ),
                                     SizedBox(
                                         width:
@@ -297,7 +334,8 @@ class _HomeViewState extends State<HomeView> {
                                           maxLines: 2,
                                           textAlign: TextAlign.center,
                                           overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(color: Colors.black),
+                                          style:
+                                              TextStyle(color: secondaryColor),
                                         ))
                                   ],
                                 ),
@@ -351,7 +389,7 @@ class _HomeViewState extends State<HomeView> {
                                       CupertinoIcons.doc,
                                       size: MediaQuery.of(context).size.width *
                                           0.3,
-                                      color: Color(0xff606268),
+                                      color: secondaryColor,
                                     ),
                                     SizedBox(
                                         width:
@@ -362,7 +400,8 @@ class _HomeViewState extends State<HomeView> {
                                           maxLines: 2,
                                           textAlign: TextAlign.center,
                                           overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(color: Colors.black),
+                                          style:
+                                              TextStyle(color: secondaryColor),
                                         ))
                                   ],
                                 ),

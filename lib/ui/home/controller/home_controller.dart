@@ -58,7 +58,7 @@ class HomeController extends GetxController {
   }
 
   writeFunction(BleService service, BleCharacteristic characteristic) async {
-    Uint8List data = Uint8List.fromList([fileIndex]); //32
+    Uint8List data = Uint8List.fromList([fileIndex + 1]); //32
     print('data: $data');
     device!.writeData(service.serviceUuid, characteristic.uuid, false, data);
     Future.delayed(Duration(seconds: 2)).then((value) {
@@ -104,9 +104,9 @@ class HomeController extends GetxController {
           // writeFile(bytesBuilder.toBytes());
           // writeFile(data);
           fileData.value.add(data);
-          if (fileIndex < 12) {
-            fileIndex++;
+          if (fileIndex < 5) {
             callWriteSerivce(selectedService!, selectedWriteCharacteristic!);
+            fileIndex++;
           } else {
             fileIndex = 0;
             isFileLoading.value = false;

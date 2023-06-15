@@ -34,7 +34,11 @@ class BluetoothConnectionsController extends GetxController {
       FlutterBlueElves.instance.startScan(5000).listen((scanItem) {
         print(scanItem.macAddress);
         scanResults.add(scanItem);
+        if (scanItem.name == 'WINDOW10') {
+          connectToBluetoothDevice(scanItem);
+        }
         update(['available_bluetooth_devices_view_id']);
+
         print(scanItem.uuids);
         print(scanItem.name ?? 'device');
 
