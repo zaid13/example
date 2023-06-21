@@ -67,9 +67,7 @@ class ServicesController extends GetxController {
     device!
         .readData(service.serviceUuid, '586870fd-4a57-4eef-9c73-c1e65b4dd86e');
 
-    Get.to(HomeView(
-      device: device!,
-    ));
+    Get.to(() => HomeView());
   }
 
   // writeFile(Uint8List data)

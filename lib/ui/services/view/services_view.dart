@@ -34,6 +34,7 @@ class _ServicesViewState extends State<ServicesView> {
       appBar: AppBar(
         title: const Text('Bluetooth'),
         centerTitle: true,
+        leading: Container(),
       ),
       body: GetBuilder<ServicesController>(
         id: "available_services_view_id",

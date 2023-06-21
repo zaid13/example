@@ -1,13 +1,14 @@
 import 'package:ble/constants/style/style.dart';
+import 'package:ble/constants/values/values.dart';
+import 'package:ble/ui/bluetooth_connections/view/bluetooth_connections_view.dart';
+import 'package:ble/ui/home/view/home_view.dart';
 import 'package:ble/ui/live_data/controller/live_data_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_elves/flutter_blue_elves.dart';
 import 'package:get/get.dart';
 
 class LiveDataView extends StatefulWidget {
-  LiveDataView({required this.device, Key? key}) : super(key: key);
-
-  Device device;
+  LiveDataView({Key? key}) : super(key: key);
 
   @override
   State<LiveDataView> createState() => _LiveDataViewState();
@@ -20,7 +21,7 @@ class _LiveDataViewState extends State<LiveDataView> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    controller.device = widget.device;
+    controller.device = mainDevice;
     controller.listenToIncomingData();
     controller.listensToService();
   }
@@ -36,15 +37,7 @@ class _LiveDataViewState extends State<LiveDataView> {
           style: TextStyle(color: headingColor),
         ),
         centerTitle: true,
-        leading: GestureDetector(
-          onTap: () {
-            Get.back();
-          },
-          child: Icon(
-            Icons.arrow_back_ios,
-            color: headingColor,
-          ),
-        ),
+        leading: Container(),
         // actions: [
         //   Padding(
         //     padding: const EdgeInsets.only(right: 8.0),
@@ -173,7 +166,35 @@ class _LiveDataViewState extends State<LiveDataView> {
                     ],
                   ),
                 )),
-          ))
+          )),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Get.to(() => BluetoothConnectionView());
+                  },
+                  child: Text(
+                    'Setup',
+                    style: TextStyle(color: headingColor),
+                  ),
+                  style: ElevatedButton.styleFrom(backgroundColor: mainColor),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Get.to(() => HomeView());
+                  },
+                  child: Text(
+                    'Download',
+                    style: TextStyle(color: headingColor),
+                  ),
+                  style: ElevatedButton.styleFrom(backgroundColor: mainColor),
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );

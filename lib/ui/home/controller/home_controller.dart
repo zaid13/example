@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:ble/constants/values/values.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_elves/flutter_blue_elves.dart';
 import 'package:get/get.dart';
@@ -31,20 +32,24 @@ class HomeController extends GetxController {
 
   List<BleService> servicesInfo = [];
 
+  List<String> fileList = [];
+
   void listensToService() {
-    ///use this stream to listen discovery result
-    device!.serviceDiscoveryStream.listen((serviceItem) {
-      if (serviceItem.serviceUuid == serviceUUID) {
-        serviceItem.characteristics.forEach((characteristic) {
-          if (characteristic.uuid == writeCharacteristicUUID) {
-            selectedService = serviceItem;
-            selectedWriteCharacteristic = characteristic;
-            callWriteSerivce(serviceItem, characteristic);
-          }
-        });
-      }
-    });
-    device!.discoveryService();
+    try {
+      ///use this stream to listen discovery result
+      device!.serviceDiscoveryStream.listen((serviceItem) {
+        if (serviceItem.serviceUuid == serviceUUID) {
+          serviceItem.characteristics.forEach((characteristic) {
+            if (characteristic.uuid == writeCharacteristicUUID) {
+              selectedService = serviceItem;
+              selectedWriteCharacteristic = characteristic;
+              callWriteSerivce(serviceItem, characteristic);
+            }
+          });
+        }
+      });
+      device!.discoveryService();
+    } catch (e) {}
   }
 
   Future<void> callWriteSerivce(
@@ -58,7 +63,7 @@ class HomeController extends GetxController {
   }
 
   writeFunction(BleService service, BleCharacteristic characteristic) async {
-    Uint8List data = Uint8List.fromList([fileIndex + 1]); //32
+    Uint8List data = Uint8List.fromList([fileIndex]); //32
     print('data: $data');
     device!.writeData(service.serviceUuid, characteristic.uuid, false, data);
     Future.delayed(Duration(seconds: 2)).then((value) {
@@ -69,7 +74,7 @@ class HomeController extends GetxController {
   writeFile(String data, int fileIndex) async {
     var tempPath = await getExternalStorageDirectory();
 
-    String fileFinalPath = '/file$fileIndex.csv';
+    String fileFinalPath = '/${fileList[fileIndex].split('\\').last}';
 
     String filePath = tempPath!.path + fileFinalPath;
     final file = File(filePath);
@@ -87,129 +92,90 @@ class HomeController extends GetxController {
   }
 
   void listenToIncomingData() {
-    String data = "";
-    deviceSignalResultStream =
-        device!.deviceSignalResultStream.listen((event) async {
-      print('new data 22');
-      print(event.data);
+    try {
+      // String data = "";
+      String fileNames = "";
+      deviceSignalResultStream =
+          device!.deviceSignalResultStream.listen((event) async {
+        print('new data 22');
+        print(event.data);
 
-      // String? data;
-      // List<int> bytes = [];
-      // List<Uint8List> data = [];
-      // BytesBuilder bytesBuilder = BytesBuilder();
+        // String? data;
+        // List<int> bytes = [];
+        // List<Uint8List> data = [];
+        // BytesBuilder bytesBuilder = BytesBuilder();
 
-      if (event.data != null && event.data!.isNotEmpty) {
-        if (event.data?.length == 1 && event.data![0] == 32) {
-          print('file recieved ');
-          // writeFile(bytesBuilder.toBytes());
-          // writeFile(data);
-          fileData.value.add(data);
-          if (fileIndex < 5) {
-            callWriteSerivce(selectedService!, selectedWriteCharacteristic!);
-            fileIndex++;
-          } else {
-            fileIndex = 0;
-            isFileLoading.value = false;
-          }
-        } else {
-          for (int i = 0; i < event.data!.length; i++) {
-            String currentStr = event.data![i].toString();
+        if (event.type != DeviceSignalType.characteristicsNotify &&
+            event.type != DeviceSignalType.descriptorWrite) {
+          if (event.data != null && event.data!.isNotEmpty) {
+            if (event.data?.length == 3 && event.data![0] == 32) {
+              print('file recieved ');
+              // writeFile(bytesBuilder.toBytes());
+              // writeFile(data);
+              if (fileList.isEmpty && fileIndex == 0) {
+                fileList = fileNames.split(',');
+                fileList.removeAt(0);
+                fileIndex++;
+                fileData.value.add("");
+                callWriteSerivce(
+                    selectedService!, selectedWriteCharacteristic!);
+              } else if (fileIndex <= fileList.length) {
+                fileIndex++;
+                fileData.value.add("");
+                callWriteSerivce(
+                    selectedService!, selectedWriteCharacteristic!);
+              } else {
+                fileIndex = 0;
+                fileData.value.removeAt(0);
+                isFileLoading.value = false;
+              }
+            } else {
+              if (fileList.isEmpty && fileIndex == 0) {
+                for (int i = 0; i < event.data!.length; i++) {
+                  String currentStr = event.data![i].toString();
 
-            if (currentStr.length < 2) {
-              currentStr = "0" + currentStr;
+                  if (currentStr.length < 2) {
+                    currentStr = "0$currentStr";
+                  }
+                  String asciiString =
+                      String.fromCharCode(int.parse(currentStr));
+
+                  fileNames = fileNames + asciiString;
+                }
+                device!.readData(serviceUUID, readCharacteristicUUID);
+                // device!.readData(serviceUUID, readCharacteristicUUID);
+              } else {
+                for (int i = 0; i < event.data!.length; i++) {
+                  String currentStr = event.data![i].toString();
+
+                  if (currentStr.length < 2) {
+                    currentStr = "0$currentStr";
+                  }
+                  String asciiString =
+                      String.fromCharCode(int.parse(currentStr));
+
+                  fileData.value[fileIndex - 1] =
+                      fileData.value[fileIndex - 1] + asciiString;
+                }
+                device!.readData(serviceUUID, readCharacteristicUUID);
+              }
+              // bytesBuilder.add(event.data!);
             }
-            String asciiString = String.fromCharCode(int.parse(currentStr));
-
-            data = data + asciiString;
           }
-
-          device!.readData(serviceUUID, readCharacteristicUUID);
-
-          // bytesBuilder.add(event.data!);
         }
-      }
-
-      if (event.type == DeviceSignalType.characteristicsRead ||
-          event.type == DeviceSignalType.unKnown) {
-        print('read descriptor unknown');
-        print('data: $data');
-
-        print(event.uuid +
-            "\n" +
-            (event.isSuccess
-                ? "read data success signal and data:\n"
-                : "read data failed signal and data:\n") +
-            (data.toString() ?? "none") +
-            "\n" +
-            DateTime.now().toString());
-        // setState(() {
-        //   _logs.insert(
-        //       0,
-        //       _LogItem(
-        //           event.uuid,
-        //           (event.isSuccess
-        //                   ? "read data success signal and data:\n"
-        //                   : "read data failed signal and data:\n") +
-        //               (data ?? "none"),
-        //           DateTime.now().toString()));
-        // });
-      } else if (event.type == DeviceSignalType.characteristicsWrite) {
-        print(event.uuid +
-            "\n" +
-            (event.isSuccess
-                ? "write data success signal and data:\n"
-                : "write data success signal and data:\n") +
-            (data.toString() ?? "none") +
-            "\n" +
-            DateTime.now().toString());
-        // setState(() {
-        //
-        //   _logs.insert(
-        //       0,
-        //       _LogItem(
-        //           event.uuid,
-        //           (event.isSuccess
-        //                   ? "write data success signal and data:\n"
-        //                   : "write data success signal and data:\n") +
-        //               (data ?? "none"),
-        //           DateTime.now().toString()));
-        // });
-      } else if (event.type == DeviceSignalType.characteristicsNotify) {
-        print(event.uuid +
-            "\n" +
-            (data.toString() ?? "none") +
-            "\n" +
-            DateTime.now().toString());
-        // setState(() {
-        //   _logs.insert(0,
-        //       _LogItem(event.uuid, data ?? "none", DateTime.now().toString()));
-        // });
-      } else if (event.type == DeviceSignalType.descriptorRead) {
-        print('read descriptor -3');
-        print(event.uuid +
-            "\n" +
-            (event.isSuccess
-                ? "success\n"
-                : "read descriptor data failed signal and data:\n") +
-            (data.toString() ?? "none") +
-            "\n" +
-            DateTime.now().toString());
-        // setState(() {
-        //   print('data');
-        //   print(data);
-        //   print('data');
-        //
-        //   _logs.insert(
-        //       0,
-        //       _LogItem(
-        //           event.uuid,
-        //           (event.isSuccess
-        //                   ? "success\n"
-        //                   : "read descriptor data failed signal and data:\n") +
-        //               (data ?? "none"),
-        //           DateTime.now().toString()));
-        // });
-      }
-    });
+      });
+    } catch (e) {}
   }
+
+  // void listenToDeviceState() {
+  //   if (mainDevice != null) {
+  //     mainDevice!.stateStream.listen((event) {
+  //       if (event == DeviceState.connected) {
+  //         deviceState = 'Connected';
+  //       } else if (event == DeviceState.disconnected) {
+  //         deviceState = 'Disconnected';
+  //       }
+  //     });
+  //   }
+  // }
 }

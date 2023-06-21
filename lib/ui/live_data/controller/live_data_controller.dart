@@ -19,134 +19,138 @@ class LiveDataController extends GetxController {
 
   void listensToService() {
     ///use this stream to listen discovery result
-    device!.serviceDiscoveryStream.listen((serviceItem) {
-      if (serviceItem.serviceUuid == serviceUUID) {
-        serviceItem.characteristics.forEach((characteristic) {
-          if (characteristic.uuid == notifyCharacteristicUUID) {
-            selectedService = serviceItem;
-            selectedNotifyCharacteristic = characteristic;
-            device!.setNotify(serviceUUID, characteristic.uuid, true);
-          }
-        });
-      }
-    });
-    device!.discoveryService();
+    try {
+      device!.serviceDiscoveryStream.listen((serviceItem) {
+        if (serviceItem.serviceUuid == serviceUUID) {
+          serviceItem.characteristics.forEach((characteristic) {
+            if (characteristic.uuid == notifyCharacteristicUUID) {
+              selectedService = serviceItem;
+              selectedNotifyCharacteristic = characteristic;
+              device!.setNotify(serviceUUID, characteristic.uuid, true);
+            }
+          });
+        }
+      });
+      device!.discoveryService();
+    } catch (e) {}
   }
 
   void listenToIncomingData() {
-    String data = "";
-    deviceSignalResultStream =
-        device!.deviceSignalResultStream.listen((event) async {
-      print('new data 22');
-      // print(event.data);
+    try {
+      String data = "";
+      deviceSignalResultStream =
+          device!.deviceSignalResultStream.listen((event) async {
+        print('new data 22');
+        // print(event.data);
 
-      // String? data;
-      // List<int> bytes = [];
-      // List<Uint8List> data = [];
-      // BytesBuilder bytesBuilder = BytesBuilder();
-      if (event.type == DeviceSignalType.characteristicsNotify) {
-        for (int i = 0; i < event.data!.length; i++) {
-          String currentStr = event.data![i].toString();
+        // String? data;
+        // List<int> bytes = [];
+        // List<Uint8List> data = [];
+        // BytesBuilder bytesBuilder = BytesBuilder();
+        if (event.type == DeviceSignalType.characteristicsNotify) {
+          for (int i = 0; i < event.data!.length; i++) {
+            String currentStr = event.data![i].toString();
 
-          if (currentStr.length < 2) {
-            currentStr = "0" + currentStr;
+            if (currentStr.length < 2) {
+              currentStr = "0" + currentStr;
+            }
+            String asciiString = String.fromCharCode(int.parse(currentStr));
+
+            data = data + asciiString;
           }
-          String asciiString = String.fromCharCode(int.parse(currentStr));
-
-          data = data + asciiString;
+          completeLiveData.value = [];
+          List<String> splitedData = data.split('\r\n');
+          completeLiveData.value =
+              splitedData[splitedData.length >= 2 ? splitedData.length - 2 : 0]
+                  .split('#');
+          // completeLiveData.value = data.split('\r\n').last.split('#');
+          print(
+              'ng data ${splitedData[splitedData.length >= 2 ? splitedData.length - 2 : 0]}');
         }
-        completeLiveData.value = [];
-        List<String> splitedData = data.split('\r\n');
-        completeLiveData.value =
-            splitedData[splitedData.length >= 2 ? splitedData.length - 2 : 0]
-                .split('#');
-        // completeLiveData.value = data.split('\r\n').last.split('#');
-        print(
-            'ng data ${splitedData[splitedData.length >= 2 ? splitedData.length - 2 : 0]}');
-      }
 
-      // if (event.type == DeviceSignalType.characteristicsRead ||
-      //     event.type == DeviceSignalType.unKnown) {
-      //   print('read descriptor unknown');
-      //   print('data: $data');
-      //
-      //   print(event.uuid +
-      //       "\n" +
-      //       (event.isSuccess
-      //           ? "read data success signal and data:\n"
-      //           : "read data failed signal and data:\n") +
-      //       (data.toString() ?? "none") +
-      //       "\n" +
-      //       DateTime.now().toString());
-      //   // setState(() {
-      //   //   _logs.insert(
-      //   //       0,
-      //   //       _LogItem(
-      //   //           event.uuid,
-      //   //           (event.isSuccess
-      //   //                   ? "read data success signal and data:\n"
-      //   //                   : "read data failed signal and data:\n") +
-      //   //               (data ?? "none"),
-      //   //           DateTime.now().toString()));
-      //   // });
-      // } else if (event.type == DeviceSignalType.characteristicsWrite) {
-      //   print(event.uuid +
-      //       "\n" +
-      //       (event.isSuccess
-      //           ? "write data success signal and data:\n"
-      //           : "write data success signal and data:\n") +
-      //       (data.toString() ?? "none") +
-      //       "\n" +
-      //       DateTime.now().toString());
-      //   // setState(() {
-      //   //
-      //   //   _logs.insert(
-      //   //       0,
-      //   //       _LogItem(
-      //   //           event.uuid,
-      //   //           (event.isSuccess
-      //   //                   ? "write data success signal and data:\n"
-      //   //                   : "write data success signal and data:\n") +
-      //   //               (data ?? "none"),
-      //   //           DateTime.now().toString()));
-      //   // });
-      // } else if (event.type == DeviceSignalType.characteristicsNotify) {
-      //   print(event.uuid +
-      //       "\n" +
-      //       (data.toString() ?? "none") +
-      //       "\n" +
-      //       DateTime.now().toString());
-      //   // setState(() {
-      //   //   _logs.insert(0,
-      //   //       _LogItem(event.uuid, data ?? "none", DateTime.now().toString()));
-      //   // });
-      // } else if (event.type == DeviceSignalType.descriptorRead) {
-      //   print('read descriptor -3');
-      //   print(event.uuid +
-      //       "\n" +
-      //       (event.isSuccess
-      //           ? "success\n"
-      //           : "read descriptor data failed signal and data:\n") +
-      //       (data.toString() ?? "none") +
-      //       "\n" +
-      //       DateTime.now().toString());
-      //   // setState(() {
-      //   //   print('data');
-      //   //   print(data);
-      //   //   print('data');
-      //   //
-      //   //   _logs.insert(
-      //   //       0,
-      //   //       _LogItem(
-      //   //           event.uuid,
-      //   //           (event.isSuccess
-      //   //                   ? "success\n"
-      //   //                   : "read descriptor data failed signal and data:\n") +
-      //   //               (data ?? "none"),
-      //   //           DateTime.now().toString()));
-      //   // });
-      // }
-    });
+        // if (event.type == DeviceSignalType.characteristicsRead ||
+        //     event.type == DeviceSignalType.unKnown) {
+        //   print('read descriptor unknown');
+        //   print('data: $data');
+        //
+        //   print(event.uuid +
+        //       "\n" +
+        //       (event.isSuccess
+        //           ? "read data success signal and data:\n"
+        //           : "read data failed signal and data:\n") +
+        //       (data.toString() ?? "none") +
+        //       "\n" +
+        //       DateTime.now().toString());
+        //   // setState(() {
+        //   //   _logs.insert(
+        //   //       0,
+        //   //       _LogItem(
+        //   //           event.uuid,
+        //   //           (event.isSuccess
+        //   //                   ? "read data success signal and data:\n"
+        //   //                   : "read data failed signal and data:\n") +
+        //   //               (data ?? "none"),
+        //   //           DateTime.now().toString()));
+        //   // });
+        // } else if (event.type == DeviceSignalType.characteristicsWrite) {
+        //   print(event.uuid +
+        //       "\n" +
+        //       (event.isSuccess
+        //           ? "write data success signal and data:\n"
+        //           : "write data success signal and data:\n") +
+        //       (data.toString() ?? "none") +
+        //       "\n" +
+        //       DateTime.now().toString());
+        //   // setState(() {
+        //   //
+        //   //   _logs.insert(
+        //   //       0,
+        //   //       _LogItem(
+        //   //           event.uuid,
+        //   //           (event.isSuccess
+        //   //                   ? "write data success signal and data:\n"
+        //   //                   : "write data success signal and data:\n") +
+        //   //               (data ?? "none"),
+        //   //           DateTime.now().toString()));
+        //   // });
+        // } else if (event.type == DeviceSignalType.characteristicsNotify) {
+        //   print(event.uuid +
+        //       "\n" +
+        //       (data.toString() ?? "none") +
+        //       "\n" +
+        //       DateTime.now().toString());
+        //   // setState(() {
+        //   //   _logs.insert(0,
+        //   //       _LogItem(event.uuid, data ?? "none", DateTime.now().toString()));
+        //   // });
+        // } else if (event.type == DeviceSignalType.descriptorRead) {
+        //   print('read descriptor -3');
+        //   print(event.uuid +
+        //       "\n" +
+        //       (event.isSuccess
+        //           ? "success\n"
+        //           : "read descriptor data failed signal and data:\n") +
+        //       (data.toString() ?? "none") +
+        //       "\n" +
+        //       DateTime.now().toString());
+        //   // setState(() {
+        //   //   print('data');
+        //   //   print(data);
+        //   //   print('data');
+        //   //
+        //   //   _logs.insert(
+        //   //       0,
+        //   //       _LogItem(
+        //   //           event.uuid,
+        //   //           (event.isSuccess
+        //   //                   ? "success\n"
+        //   //                   : "read descriptor data failed signal and data:\n") +
+        //   //               (data ?? "none"),
+        //   //           DateTime.now().toString()));
+        //   // });
+        // }
+      });
+    } catch (e) {}
   }
 
   getProgramStatus() {
