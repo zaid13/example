@@ -92,7 +92,7 @@ class _BluetoothConnectionViewState extends State<BluetoothConnectionView>
                               .animate(controller.animationController!),
                           child: const Icon(
                             Icons.rotate_left,
-                            color: secondaryColor,
+                            color: headingColor,
                             size: 35,
                           ),
                         ),
@@ -130,7 +130,7 @@ class _BluetoothConnectionViewState extends State<BluetoothConnectionView>
                                 child: Text(
                                   controller.scanResults[index].name ??
                                       'Device $index',
-                                  style: TextStyle(color: secondaryColor),
+                                  style: TextStyle(color: headingColor),
                                 ),
                               ),
                             ),
