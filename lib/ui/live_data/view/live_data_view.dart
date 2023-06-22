@@ -59,111 +59,390 @@ class _LiveDataViewState extends State<LiveDataView> {
               child: SingleChildScrollView(
             child: Obx(() => Align(
                   alignment: Alignment.center,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'PROGRAM: ${controller.getProgramStatus()}',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'PUMP: ${controller.getPumpStatus()}',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'SET FLOW: ${controller.getSetFlowValue()} lpm',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'DIFF. PRES.: ${controller.getDiffPressureValue()} ${controller.getPressureUnit()}',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'STATIC PRES.: ${controller.getStaticPressureValue()} ${controller.getPressureUnit()}',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'BAROM. PRES.: ${controller.getBaroMetricPressureValue()} mbar',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'DUCT TEMP.: ${controller.getDuctTempValue()} °C',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'ISOKINETIC GRADE: ${controller.getISOKineticValue()}%',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'POINT: ${controller.getPointDoneByTotal()}',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'ELAPSED TIME: ${controller.getElapsedTimeInMints()} m',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'SET TIME: ${controller.getSetPointTimeInMints()} m',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'REMAINING TIME: ${controller.getRemainingTimeInMints()} m',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'PROGRAM:',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: secondaryColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '${controller.getProgramStatus()}',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  color: secondaryColor, fontSize: 18),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 1.5,
+                          width: MediaQuery.of(context).size.width,
+                          color: secondaryColor,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'PUMP:',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: secondaryColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '${controller.getPumpStatus()}',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  color: secondaryColor, fontSize: 18),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 1.5,
+                          width: MediaQuery.of(context).size.width,
+                          color: secondaryColor,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'SET FLOW:',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: secondaryColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '${controller.getSetFlowValue()} lpm',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  color: secondaryColor, fontSize: 18),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 1.5,
+                          width: MediaQuery.of(context).size.width,
+                          color: secondaryColor,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'DIFF. PRES.:',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: secondaryColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '${controller.getDiffPressureValue()} ${controller.getPressureUnit()}',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  color: secondaryColor, fontSize: 18),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 1.5,
+                          width: MediaQuery.of(context).size.width,
+                          color: secondaryColor,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'STATIC PRES.:',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: secondaryColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '${controller.getStaticPressureValue()} ${controller.getPressureUnit()}',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  color: secondaryColor, fontSize: 18),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 1.5,
+                          width: MediaQuery.of(context).size.width,
+                          color: secondaryColor,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'BAROM. PRES.:',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: secondaryColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '${controller.getBaroMetricPressureValue()} mbar',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  color: secondaryColor, fontSize: 18),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 1.5,
+                          width: MediaQuery.of(context).size.width,
+                          color: secondaryColor,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'DUCT TEMP.:',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: secondaryColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '${controller.getDuctTempValue()} °C',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  color: secondaryColor, fontSize: 18),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 1.5,
+                          width: MediaQuery.of(context).size.width,
+                          color: secondaryColor,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'ISOKINETIC GRADE:',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: secondaryColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '${controller.getISOKineticValue()}%',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  color: secondaryColor, fontSize: 18),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 1.5,
+                          width: MediaQuery.of(context).size.width,
+                          color: secondaryColor,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'POINT:',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: secondaryColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '${controller.getPointDoneByTotal()}',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  color: secondaryColor, fontSize: 18),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 1.5,
+                          width: MediaQuery.of(context).size.width,
+                          color: secondaryColor,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'ELAPSED TIME:',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: secondaryColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '${controller.getElapsedTimeInMints()} m',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  color: secondaryColor, fontSize: 18),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 1.5,
+                          width: MediaQuery.of(context).size.width,
+                          color: secondaryColor,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'SET TIME:',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: secondaryColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '${controller.getSetPointTimeInMints()} m',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  color: secondaryColor, fontSize: 18),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 1.5,
+                          width: MediaQuery.of(context).size.width,
+                          color: secondaryColor,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'REMAINING TIME:',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: secondaryColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '${controller.getRemainingTimeInMints()} m',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  color: secondaryColor, fontSize: 18),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 1.5,
+                          width: MediaQuery.of(context).size.width,
+                          color: secondaryColor,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    ),
                   ),
                 )),
           )),

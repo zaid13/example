@@ -119,6 +119,7 @@ class BluetoothConnectionsController extends GetxController {
         this.device = device;
         mainDevice = device;
         listenToDeviceState();
+
         Get.to(() => LiveDataView());
         // Get.to(HomeView(
         //   device: device,

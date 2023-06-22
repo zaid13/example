@@ -24,9 +24,13 @@ class HomeController extends GetxController {
   BleService? selectedService;
 
   Rx<bool> isFileLoading = Rx(true);
+  Rx<bool> isFileDataLoading = Rx(false);
   Rx<List<String>> fileData = Rx([]);
 
   int fileIndex = 0;
+
+  Rx<int> totalFileNumber = Rx(0);
+  Rx<int> currentFileNumber = Rx(0);
 
   StreamSubscription<DeviceSignalResult>? deviceSignalResultStream;
 
@@ -63,11 +67,13 @@ class HomeController extends GetxController {
   }
 
   writeFunction(BleService service, BleCharacteristic characteristic) async {
-    Uint8List data = Uint8List.fromList([fileIndex]); //32
-    print('data: $data');
-    device!.writeData(service.serviceUuid, characteristic.uuid, false, data);
-    Future.delayed(Duration(seconds: 2)).then((value) {
-      device!.readData(serviceUUID, readCharacteristicUUID);
+    Future.delayed(Duration(seconds: 1)).then((value) {
+      Uint8List data = Uint8List.fromList([fileIndex]); //32
+      print('data: $data');
+      device!.writeData(service.serviceUuid, characteristic.uuid, false, data);
+      Future.delayed(Duration(seconds: 1)).then((value) {
+        device!.readData(serviceUUID, readCharacteristicUUID);
+      });
     });
   }
 
@@ -100,11 +106,6 @@ class HomeController extends GetxController {
         print('new data 22');
         print(event.data);
 
-        // String? data;
-        // List<int> bytes = [];
-        // List<Uint8List> data = [];
-        // BytesBuilder bytesBuilder = BytesBuilder();
-
         if (event.type != DeviceSignalType.characteristicsNotify &&
             event.type != DeviceSignalType.descriptorWrite) {
           if (event.data != null && event.data!.isNotEmpty) {
@@ -116,18 +117,22 @@ class HomeController extends GetxController {
                 fileList = fileNames.split(',');
                 fileList.removeAt(0);
                 fileIndex++;
+                totalFileNumber.value = fileList.length;
+                isFileDataLoading.value = true;
+                isFileLoading.value = false;
                 fileData.value.add("");
                 callWriteSerivce(
                     selectedService!, selectedWriteCharacteristic!);
               } else if (fileIndex <= fileList.length) {
                 fileIndex++;
+                currentFileNumber.value++;
                 fileData.value.add("");
                 callWriteSerivce(
                     selectedService!, selectedWriteCharacteristic!);
               } else {
                 fileIndex = 0;
                 fileData.value.removeAt(0);
-                isFileLoading.value = false;
+                isFileDataLoading.value = false;
               }
             } else {
               if (fileList.isEmpty && fileIndex == 0) {
