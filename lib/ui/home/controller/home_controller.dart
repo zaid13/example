@@ -32,6 +32,17 @@ class HomeController extends GetxController {
   Rx<int> totalFileNumber = Rx(0);
   Rx<int> currentFileNumber = Rx(0);
 
+  resetData() {
+    isFileLoading.value = true;
+    isFileDataLoading.value = false;
+    fileData.value = [];
+
+    fileIndex = 0;
+
+    totalFileNumber.value = 0;
+    currentFileNumber.value = 0;
+  }
+
   StreamSubscription<DeviceSignalResult>? deviceSignalResultStream;
 
   List<BleService> servicesInfo = [];
@@ -99,6 +110,7 @@ class HomeController extends GetxController {
 
   getFileDataPercentage() {
     try {
+      if (totalFileNumber.value == 0) return 0;
       return currentFileNumber.value / totalFileNumber.value;
     } catch (e) {
       return 0;
