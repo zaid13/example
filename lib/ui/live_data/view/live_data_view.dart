@@ -69,21 +69,32 @@ class _LiveDataViewState extends State<LiveDataView> {
                         SizedBox(
                           height: 15,
                         ),
-                        InfoTile("PROGRAM:",controller.getProgramStatus()),
-                        InfoTile("SET FLOW:",controller.getSetFlowValue()+' lpm'),
-                        InfoTile("DIFF. PRES.:",controller.getDiffPressureValue()+' '+controller.getPressureUnit()),
-                        InfoTile("STATIC PRES.:",controller.getStaticPressureValue()+' '+controller.getPressureUnit()),
-                        InfoTile("BAROM. PRES.:",controller.getBaroMetricPressureValue() +" mbar"),
-                        InfoTile("DUCT TEMP.:",controller.getDuctTempValue()+' °C'),
-                        InfoTile("ISOKINETIC GRADE:",controller.getISOKineticValue()+' %'),
-                        InfoTile("POINT:",controller.getPointDoneByTotal()),
-                        InfoTile("ELAPSED TIME:",controller.getElapsedTimeInMints()+ ' m'),
-                        InfoTile("SET TIME:",controller.getSetPointTimeInMints()+ ' m'),
-                        InfoTile("REMAINING TIME:",controller.getRemainingTimeInMints()+' m'),
-
-
-
-
+                        InfoTile("PROGRAM:", controller.getProgramStatus()),
+                        InfoTile(
+                            "SET FLOW:", controller.getSetFlowValue() + ' lpm'),
+                        InfoTile(
+                            "DIFF. PRES.:",
+                            controller.getDiffPressureValue() +
+                                ' ' +
+                                controller.getPressureUnit()),
+                        InfoTile(
+                            "STATIC PRES.:",
+                            controller.getStaticPressureValue() +
+                                ' ' +
+                                controller.getPressureUnit()),
+                        InfoTile("BAROM. PRES.:",
+                            controller.getBaroMetricPressureValue() + " mbar"),
+                        InfoTile("DUCT TEMP.:",
+                            controller.getDuctTempValue() + ' °C'),
+                        InfoTile("ISOKINETIC GRADE:",
+                            controller.getISOKineticValue() + ' %'),
+                        InfoTile("POINT:", controller.getPointDoneByTotal()),
+                        InfoTile("ELAPSED TIME:",
+                            controller.getElapsedTimeInMints() + ' m'),
+                        InfoTile("SET TIME:",
+                            controller.getSetPointTimeInMints() + ' m'),
+                        InfoTile("REMAINING TIME:",
+                            controller.getRemainingTimeInMints() + ' m'),
                       ],
                     ),
                   ),
@@ -122,7 +133,7 @@ class _LiveDataViewState extends State<LiveDataView> {
     );
   }
 
-  InfoTile(String key , String value){
+  InfoTile(String key, String value) {
     return Column(
       children: [
         Row(
@@ -132,24 +143,27 @@ class _LiveDataViewState extends State<LiveDataView> {
             Text(
               key,
               textAlign: TextAlign.left,
-              style: TextStyle(color: secondaryColor, fontSize: 20,fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: secondaryColor,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
             ),
-
-
             Text(
               value,
               textAlign: TextAlign.left,
               style: TextStyle(color: secondaryColor, fontSize: 20),
             ),
-
           ],
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 10,bottom: 10),
-          child: Container(height: 1,color: Colors.white,width: MediaQuery.of(context).size.width,),
+          padding: const EdgeInsets.only(top: 10, bottom: 10),
+          child: Container(
+            height: 1,
+            color: Colors.white,
+            width: MediaQuery.of(context).size.width,
+          ),
         )
       ],
     );
-
   }
 }

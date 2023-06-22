@@ -120,11 +120,10 @@ class _HomeViewState extends State<HomeView> {
                                                 0.65,
                                         animateFromLastPercent: true,
                                         lineHeight: 30.0,
-                                        percent: controller
-                                                .currentFileNumber.value /
-                                            controller.totalFileNumber.value,
+                                        percent:
+                                            controller.getFileDataPercentage(),
                                         center: Text(
-                                          "${((controller.currentFileNumber.value / controller.totalFileNumber.value) * 100).round()}%",
+                                          "${(controller.getFileDataPercentage() * 100).round()}%",
                                           style: TextStyle(color: headingColor),
                                         ),
                                         linearStrokeCap: LinearStrokeCap.butt,

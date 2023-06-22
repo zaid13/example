@@ -97,6 +97,14 @@ class HomeController extends GetxController {
     ));
   }
 
+  getFileDataPercentage() {
+    try {
+      return currentFileNumber.value / totalFileNumber.value;
+    } catch (e) {
+      return 0;
+    }
+  }
+
   void listenToIncomingData() {
     try {
       // String data = "";
@@ -116,10 +124,11 @@ class HomeController extends GetxController {
               if (fileList.isEmpty && fileIndex == 0) {
                 fileList = fileNames.split(',');
                 fileList.removeAt(0);
-                fileIndex++;
+                fileIndex = fileIndex + 2;
                 totalFileNumber.value = fileList.length;
                 isFileDataLoading.value = true;
                 isFileLoading.value = false;
+                fileData.value.add("");
                 fileData.value.add("");
                 callWriteSerivce(
                     selectedService!, selectedWriteCharacteristic!);
@@ -152,7 +161,6 @@ class HomeController extends GetxController {
               } else {
                 for (int i = 0; i < event.data!.length; i++) {
                   String currentStr = event.data![i].toString();
-
                   if (currentStr.length < 2) {
                     currentStr = "0$currentStr";
                   }
