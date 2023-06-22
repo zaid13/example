@@ -396,15 +396,22 @@ class _DeviceControlState extends State<DeviceControl> {
                               }
 
                               writeFunction()async{
-                                Uint8List data =
-                                Uint8List.fromList([23,44]); //32
-                                print('data: $data');
+                                Uint8List dataforFile_1 = Uint8List.fromList([1]); // this will read the file 1
+
+                                // Uint8List dataforFile_2 = Uint8List.fromList([2]); //this will read the file 2
+                                //
+                                // Uint8List dataforFile_5 = Uint8List.fromList([5]); // this will read the file 5
+
+
+
+
+                                print('data: $dataforFile_1');
                                 fileString = '';
                                 widget._device.writeData(
                                     service._serviceInfo.serviceUuid,
                                     characteristic.uuid,
                                     false,
-                                    data);
+                                    dataforFile_1);
                               }
 
 
@@ -419,7 +426,6 @@ class _DeviceControlState extends State<DeviceControl> {
                               }
 
                               writeFunction();
-
 
 
 
