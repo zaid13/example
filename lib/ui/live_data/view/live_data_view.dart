@@ -59,111 +59,33 @@ class _LiveDataViewState extends State<LiveDataView> {
               child: SingleChildScrollView(
             child: Obx(() => Align(
                   alignment: Alignment.center,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'PROGRAM: ${controller.getProgramStatus()}',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'PUMP: ${controller.getPumpStatus()}',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'SET FLOW: ${controller.getSetFlowValue()} lpm',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'DIFF. PRES.: ${controller.getDiffPressureValue()} ${controller.getPressureUnit()}',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'STATIC PRES.: ${controller.getStaticPressureValue()} ${controller.getPressureUnit()}',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'BAROM. PRES.: ${controller.getBaroMetricPressureValue()} mbar',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'DUCT TEMP.: ${controller.getDuctTempValue()} °C',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'ISOKINETIC GRADE: ${controller.getISOKineticValue()}%',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'POINT: ${controller.getPointDoneByTotal()}',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'ELAPSED TIME: ${controller.getElapsedTimeInMints()} m',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'SET TIME: ${controller.getSetPointTimeInMints()} m',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'REMAINING TIME: ${controller.getRemainingTimeInMints()} m',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: secondaryColor, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 15,
+                        ),
+                        InfoTile("PROGRAM:",controller.getProgramStatus()),
+                        InfoTile("SET FLOW:",controller.getSetFlowValue()+' lpm'),
+                        InfoTile("DIFF. PRES.:",controller.getDiffPressureValue()+' '+controller.getPressureUnit()),
+                        InfoTile("STATIC PRES.:",controller.getStaticPressureValue()+' '+controller.getPressureUnit()),
+                        InfoTile("BAROM. PRES.:",controller.getBaroMetricPressureValue() +" mbar"),
+                        InfoTile("DUCT TEMP.:",controller.getDuctTempValue()+' °C'),
+                        InfoTile("ISOKINETIC GRADE:",controller.getISOKineticValue()+' %'),
+                        InfoTile("POINT:",controller.getPointDoneByTotal()),
+                        InfoTile("ELAPSED TIME:",controller.getElapsedTimeInMints()+ ' m'),
+                        InfoTile("SET TIME:",controller.getSetPointTimeInMints()+ ' m'),
+                        InfoTile("REMAINING TIME:",controller.getRemainingTimeInMints()+' m'),
+
+
+
+
+                      ],
+                    ),
                   ),
                 )),
           )),
@@ -198,5 +120,36 @@ class _LiveDataViewState extends State<LiveDataView> {
         ],
       ),
     );
+  }
+
+  InfoTile(String key , String value){
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              key,
+              textAlign: TextAlign.left,
+              style: TextStyle(color: secondaryColor, fontSize: 20,fontWeight: FontWeight.bold),
+            ),
+
+
+            Text(
+              value,
+              textAlign: TextAlign.left,
+              style: TextStyle(color: secondaryColor, fontSize: 20),
+            ),
+
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 10,bottom: 10),
+          child: Container(height: 1,color: Colors.white,width: MediaQuery.of(context).size.width,),
+        )
+      ],
+    );
+
   }
 }
