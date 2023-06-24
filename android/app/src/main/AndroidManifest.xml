@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ble.ble">
    <application
-        android:label="ble"
+        android:label="Mega System APIS app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
