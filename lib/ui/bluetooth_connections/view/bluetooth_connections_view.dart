@@ -3,6 +3,7 @@ import 'package:ble/constants/values/values.dart';
 import 'package:ble/ui/bluetooth_connections/controller/bluetooth_connections_controller.dart';
 import 'package:ble/ui/home/view/home_view.dart';
 import 'package:ble/ui/live_data/view/live_data_view.dart';
+import 'package:ble/widgets/drawer/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -47,8 +48,9 @@ class _BluetoothConnectionViewState extends State<BluetoothConnectionView>
           style: TextStyle(color: headingColor),
         ),
         centerTitle: true,
-        leading: Container(),
+        iconTheme: IconThemeData(color: headingColor),
       ),
+      drawer: getDrawer(),
       body: Obx(() => Column(
             children: [
               SizedBox(
@@ -187,36 +189,6 @@ class _BluetoothConnectionViewState extends State<BluetoothConnectionView>
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Get.to(() => HomeView());
-                      },
-                      child: Text(
-                        'Download',
-                        style: TextStyle(color: headingColor),
-                      ),
-                      style:
-                          ElevatedButton.styleFrom(backgroundColor: mainColor),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Get.to(() => LiveDataView());
-                      },
-                      child: Text(
-                        'Live Data',
-                        style: TextStyle(color: headingColor),
-                      ),
-                      style:
-                          ElevatedButton.styleFrom(backgroundColor: mainColor),
-                    ),
-                  ],
-                ),
-              )
             ],
           )),
     );

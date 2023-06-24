@@ -5,6 +5,7 @@ import 'package:ble/constants/values/values.dart';
 import 'package:ble/ui/bluetooth_connections/view/bluetooth_connections_view.dart';
 import 'package:ble/ui/home/controller/home_controller.dart';
 import 'package:ble/ui/live_data/view/live_data_view.dart';
+import 'package:ble/widgets/drawer/drawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +56,6 @@ class _HomeViewState extends State<HomeView> {
               ),
             ),
             centerTitle: true,
-            leading: Container(),
             // leading: Obx(() => controller.isSubFolderSelected.value ||
             //         controller.isMainFolderSeleceted.value
             //     ? GestureDetector(
@@ -83,7 +83,9 @@ class _HomeViewState extends State<HomeView> {
             //         ),
             //       )
             //     : Container()),
+            iconTheme: IconThemeData(color: headingColor),
           ),
+          drawer: getDrawer(),
           body: Column(
             children: [
               Expanded(
@@ -582,44 +584,6 @@ class _HomeViewState extends State<HomeView> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        if (!(controller.isFileDataLoading.value ||
-                            controller.isFileLoading.value)) {
-                          Get.delete<HomeController>();
-                          Get.to(() => BluetoothConnectionView());
-                        }
-                      },
-                      child: Text(
-                        'Setup',
-                        style: TextStyle(color: headingColor),
-                      ),
-                      style:
-                          ElevatedButton.styleFrom(backgroundColor: mainColor),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (!(controller.isFileDataLoading.value ||
-                            controller.isFileLoading.value)) {
-                          Get.delete<HomeController>();
-                          Get.to(() => LiveDataView());
-                        }
-                      },
-                      child: Text(
-                        'Live Data',
-                        style: TextStyle(color: headingColor),
-                      ),
-                      style:
-                          ElevatedButton.styleFrom(backgroundColor: mainColor),
-                    ),
-                  ],
-                ),
-              )
             ],
           )),
     );

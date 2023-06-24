@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_blue_elves/flutter_blue_elves.dart';
 import 'package:get/get.dart';
 
@@ -15,7 +16,78 @@ class LiveDataController extends GetxController {
   BleService? selectedService;
   BleCharacteristic? selectedNotifyCharacteristic;
 
+  Rx<List<double>> diffPressure = Rx([]);
+  Rx<List<double>> ductTemp = Rx([]);
+  Rx<List<double>> flowRate = Rx([]);
+  Rx<List<double>> isoKineticTemp = Rx([]);
+
+  Rx<int> chartDataIndex = Rx(0);
+
   Rx<List<String>> completeLiveData = Rx([]);
+
+  void resetChartsData() {
+    diffPressure.value = [];
+    ductTemp.value = [];
+    flowRate.value = [];
+    isoKineticTemp.value = [];
+    chartDataIndex.value = 0;
+  }
+
+  void addChartsData() {
+    if (chartDataIndex.value < 20) {
+      if (completeLiveData.value.asMap().containsKey(4)) {
+        diffPressure.value.add(double.parse(completeLiveData.value[4]));
+      } else {
+        diffPressure.value.add(0);
+      }
+      if (completeLiveData.value.asMap().containsKey(7)) {
+        ductTemp.value.add(double.parse(completeLiveData.value[7]));
+      } else {
+        ductTemp.value.add(0);
+      }
+
+      if (completeLiveData.value.asMap().containsKey(3)) {
+        flowRate.value.add(double.parse(completeLiveData.value[3]));
+      } else {
+        flowRate.value.add(0);
+      }
+
+      if (completeLiveData.value.asMap().containsKey(8)) {
+        isoKineticTemp.value.add(double.parse(completeLiveData.value[8]));
+      } else {
+        isoKineticTemp.value.add(0);
+      }
+    } else {
+      if (completeLiveData.value.asMap().containsKey(4)) {
+        diffPressure.value[chartDataIndex.value % 20] =
+            double.parse(completeLiveData.value[4]);
+      } else {
+        diffPressure.value[chartDataIndex.value % 20] = 0;
+      }
+      if (completeLiveData.value.asMap().containsKey(7)) {
+        ductTemp.value[chartDataIndex.value % 20] =
+            double.parse(completeLiveData.value[7]);
+      } else {
+        ductTemp.value[chartDataIndex.value % 20] = 0;
+      }
+
+      if (completeLiveData.value.asMap().containsKey(3)) {
+        flowRate.value[chartDataIndex.value % 20] =
+            double.parse(completeLiveData.value[3]);
+      } else {
+        flowRate.value[chartDataIndex.value % 20] = 0;
+      }
+
+      if (completeLiveData.value.asMap().containsKey(8)) {
+        isoKineticTemp.value[chartDataIndex.value % 20] =
+            double.parse(completeLiveData.value[8]);
+      } else {
+        isoKineticTemp.value[chartDataIndex.value % 20] = 0;
+      }
+    }
+    chartDataIndex.value++;
+    update(['live_data_first_chart_view_id', 'live_data_second_chart_view_id']);
+  }
 
   void listensToService() {
     ///use this stream to listen discovery result
@@ -63,6 +135,7 @@ class LiveDataController extends GetxController {
           completeLiveData.value =
               splitedData[splitedData.length >= 2 ? splitedData.length - 2 : 0]
                   .split('#');
+          addChartsData();
           // completeLiveData.value = data.split('\r\n').last.split('#');
           print(
               'ng data ${splitedData[splitedData.length >= 2 ? splitedData.length - 2 : 0]}');
@@ -275,5 +348,33 @@ class LiveDataController extends GetxController {
     } else {
       return 'N/A';
     }
+  }
+
+  String getAxis() {
+    if (completeLiveData.value.asMap().containsKey(13)) {
+      return completeLiveData.value[13];
+    } else {
+      return 'N/A';
+    }
+  }
+
+  getVelocity() {
+    if (completeLiveData.value.asMap().containsKey(14)) {
+      return completeLiveData.value[14];
+    } else {
+      return 'N/A';
+    }
+  }
+
+  getPumpStatusColor() {
+    if (completeLiveData.value.asMap().containsKey(1)) {
+      if (completeLiveData.value[1] == "0") {
+        return Colors.red;
+      } else if (completeLiveData.value[1] == "1") {
+        return Colors.green;
+      }
+    }
+
+    return null;
   }
 }
