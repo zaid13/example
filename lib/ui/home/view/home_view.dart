@@ -27,23 +27,35 @@ class _HomeViewState extends State<HomeView> {
     // TODO: implement initState
     super.initState();
     controller.device = mainDevice;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.resetData();
+      controller.listenToIncomingData();
+      controller.listensToService();
+    });
     // controller.listenToDeviceState();
-    controller.resetData();
-    controller.listenToIncomingData();
-    controller.listensToService();
+
     // controller.writeFunction();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    if (controller.deviceSignalResultStream != null) {
+      controller.deviceSignalResultStream!.cancel();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
-        if (controller.isFileDataLoading.value ||
-            controller.isFileLoading.value) {
-          return Future.value(false);
-        } else {
-          return Future.value(true);
-        }
+        // if (controller.isFileDataLoading.value ||
+        //     controller.isFileLoading.value) {
+        //   return Future.value(false);
+        // } else {
+        return Future.value(true);
+        // }
       },
       child: Scaffold(
           backgroundColor: bgColor,

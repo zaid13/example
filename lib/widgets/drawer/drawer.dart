@@ -25,19 +25,23 @@ getDrawer() {
           onTap: () {
             Get.to(() => BluetoothConnectionView());
           },
-          child: Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: 10,
-              ),
-              child: Padding(
-                padding: EdgeInsets.only(left: 10.0),
-                child: Text(
-                  'Setup',
-                  style: TextStyle(
-                    color: secondaryColor,
+          child: Row(
+            children: [
+              Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 10,
                   ),
-                ),
-              )),
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 10.0),
+                    child: Text(
+                      'Setup',
+                      style: TextStyle(
+                        color: secondaryColor,
+                      ),
+                    ),
+                  )),
+            ],
+          ),
         ),
         Divider(
           color: secondaryColor,
@@ -46,19 +50,23 @@ getDrawer() {
           onTap: () {
             Get.to(() => LiveDataView());
           },
-          child: Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: 10,
-              ),
-              child: Padding(
-                padding: EdgeInsets.only(left: 10.0),
-                child: Text(
-                  'Live Data',
-                  style: TextStyle(
-                    color: secondaryColor,
+          child: Row(
+            children: [
+              Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 10,
                   ),
-                ),
-              )),
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 10.0),
+                    child: Text(
+                      'Live Data',
+                      style: TextStyle(
+                        color: secondaryColor,
+                      ),
+                    ),
+                  )),
+            ],
+          ),
         ),
         Divider(
           color: secondaryColor,
@@ -67,19 +75,23 @@ getDrawer() {
           onTap: () {
             Get.to(() => HomeView());
           },
-          child: Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: 10,
-              ),
-              child: Padding(
-                padding: EdgeInsets.only(left: 10.0),
-                child: Text(
-                  'Download',
-                  style: TextStyle(
-                    color: secondaryColor,
+          child: Row(
+            children: [
+              Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 10,
                   ),
-                ),
-              )),
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 10.0),
+                    child: Text(
+                      'Download',
+                      style: TextStyle(
+                        color: secondaryColor,
+                      ),
+                    ),
+                  )),
+            ],
+          ),
         ),
         Divider(
           color: secondaryColor,
