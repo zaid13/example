@@ -41,9 +41,9 @@ class _HomeViewState extends State<HomeView> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    if (controller.deviceSignalResultStream != null) {
-      controller.deviceSignalResultStream!.cancel();
-    }
+    // if (controller.deviceSignalResultStream != null) {
+    //   controller.deviceSignalResultStream!.cancel();
+    // }
   }
 
   @override
