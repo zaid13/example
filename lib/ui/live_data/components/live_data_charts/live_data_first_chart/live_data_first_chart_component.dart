@@ -49,6 +49,8 @@ class _LiveDataFirstChartComponentState
   }
 
   getPoints(List<double> value) {
+
+    value =  [1.0,3.0,4.0,5.0,6.0,2.0,4.0,1.0,];
     List<FlSpot> spots = [];
     for (int i = 0; i < value.length; i++) {
       spots.add(FlSpot((i + 1).toDouble(), value[i]));

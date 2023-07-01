@@ -21,6 +21,22 @@ class LineChartComponent extends StatefulWidget {
 }
 
 class _LineChartComponentState extends State<LineChartComponent> {
+
+  Widget tileWidget(double value, TitleMeta meta) {
+    final style = TextStyle(
+      color: Colors.white,
+      fontWeight: FontWeight.bold,
+      fontSize: 18,
+    );
+
+
+
+
+    return Text(value.toInt().toString(), style: style, textAlign: TextAlign.right);
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -36,7 +52,55 @@ class _LineChartComponentState extends State<LineChartComponent> {
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.35,
           child: LineChart(
+
+
             LineChartData(
+
+    titlesData:FlTitlesData(
+
+        bottomTitles: AxisTitles(
+
+          sideTitles: SideTitles(
+            showTitles: true,
+            reservedSize: 18,
+            interval: 1,
+            getTitlesWidget: tileWidget,
+          ),
+
+        ) ,
+        leftTitles:  AxisTitles(
+
+          sideTitles: SideTitles(
+            showTitles: true,
+            reservedSize: 18,
+            interval: 1,
+            getTitlesWidget: tileWidget,
+          ),
+
+        ) ,
+        rightTitles:  AxisTitles(
+
+          sideTitles: SideTitles(
+            showTitles: true,
+            reservedSize: 18,
+            interval: 1,
+            getTitlesWidget: tileWidget,
+          ),
+
+        ) ,
+      topTitles:  AxisTitles(
+
+        sideTitles: SideTitles(
+          showTitles: true,
+          reservedSize: 18,
+          interval: 1,
+          getTitlesWidget: tileWidget,
+        ),
+
+      ) ,
+
+
+    ),
                 borderData: FlBorderData(
                     border: Border.all(color: secondaryColor, width: 1)),
                 lineBarsData: [
