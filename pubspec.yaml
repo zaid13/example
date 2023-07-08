@@ -46,6 +46,7 @@ dependencies:
   percent_indicator: ^4.2.3
   flutter_native_splash: ^2.2.18
   fl_chart: ^0.55.2
+  intl: ^0.18.1
 
 dev_dependencies:
 

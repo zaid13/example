@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_elves/flutter_blue_elves.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class LiveDataController extends GetxController {
   StreamSubscription<DeviceSignalResult>? deviceSignalResultStream;
@@ -25,12 +26,15 @@ class LiveDataController extends GetxController {
 
   Rx<List<String>> completeLiveData = Rx([]);
 
+
+   DateTime updateTime =DateTime(0,0,0,0,0,0,0,0) ;
   void resetChartsData() {
     diffPressure.value = [];
     ductTemp.value = [];
     flowRate.value = [];
     isoKineticTemp.value = [];
     chartDataIndex.value = 0;
+    updateTime=DateTime(0,0,0,0,0,0,0,0);
   }
 
   void addChartsData() {
@@ -86,6 +90,7 @@ class LiveDataController extends GetxController {
       }
     }
     chartDataIndex.value++;
+    updateTime = DateTime.now();
     update(['live_data_first_chart_view_id', 'live_data_second_chart_view_id']);
   }
 
@@ -365,6 +370,18 @@ class LiveDataController extends GetxController {
       return 'N/A';
     }
   }
+
+  getDateTime() {
+
+   return  DateFormat('HH:mm:ss').format(updateTime);
+    // return updateTime.
+    if (completeLiveData.value.asMap().containsKey(14)) {
+      return completeLiveData.value[14];
+    } else {
+      return 'N/A';
+    }
+  }
+
 
   getPumpStatusColor() {
     if (completeLiveData.value.asMap().containsKey(1)) {

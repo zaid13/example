@@ -62,6 +62,7 @@ class _LiveDataStatusComponentState extends State<LiveDataStatusComponent> {
                   controller.getRemainingTimeInMints() + ' m'),
               InfoTile("AXIS:", controller.getAxis()),
               InfoTile("VELOCITY:", controller.getVelocity() + ' m/s'),
+              InfoTile("UPDATE TIME:", controller.getDateTime() ),
             ],
           )),
     );
