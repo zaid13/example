@@ -373,7 +373,7 @@ class LiveDataController extends GetxController {
 
   getDateTime() {
 
-   return  DateFormat('HH:mm:ss').format(updateTime);
+   return  DateFormat('HH:mm').format(updateTime);
     // return updateTime.
     if (completeLiveData.value.asMap().containsKey(14)) {
       return completeLiveData.value[14];
