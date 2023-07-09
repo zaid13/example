@@ -47,6 +47,7 @@ dependencies:
   flutter_native_splash: ^2.2.18
   fl_chart: ^0.55.2
   intl: ^0.18.1
+  collection: ^1.15.0
 
 dev_dependencies:
 

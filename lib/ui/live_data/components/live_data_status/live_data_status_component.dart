@@ -28,42 +28,46 @@ class _LiveDataStatusComponentState extends State<LiveDataStatusComponent> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(15),
-      child: Obx(() => Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 15,
-              ),
-              InfoTile("PROGRAM:", controller.getProgramStatus()),
-              InfoTile("PUMP:", controller.getPumpStatus(), isPumpValue: true),
-              InfoTile("SET FLOW:", controller.getSetFlowValue() + ' lpm'),
-              InfoTile(
-                  "DIFF. PRES.:",
-                  controller.getDiffPressureValue() +
-                      ' ' +
-                      controller.getPressureUnit()),
-              InfoTile(
-                  "STATIC PRES.:",
-                  controller.getStaticPressureValue() +
-                      ' ' +
-                      controller.getPressureUnit()),
-              InfoTile("BAROM. PRES.:",
-                  controller.getBaroMetricPressureValue() + " mbar"),
-              InfoTile("DUCT TEMP.:", controller.getDuctTempValue() + ' °C'),
-              InfoTile(
-                  "ISOKINETIC GRADE:", controller.getISOKineticValue() + ' %'),
-              InfoTile("POINT:", controller.getPointDoneByTotal()),
-              InfoTile(
-                  "ELAPSED TIME:", controller.getElapsedTimeInMints() + ' m'),
-              InfoTile("SET TIME:", controller.getSetPointTimeInMints() + ' m'),
-              InfoTile("REMAINING TIME:",
-                  controller.getRemainingTimeInMints() + ' m'),
-              InfoTile("AXIS:", controller.getAxis()),
-              InfoTile("VELOCITY:", controller.getVelocity() + ' m/s'),
-              InfoTile("UPDATE TIME:", controller.getDateTime() ),
-            ],
+      child: Obx(() => SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 15,
+                ),
+                InfoTile("PROGRAM:", controller.getProgramStatus()),
+                InfoTile("PUMP:", controller.getPumpStatus(),
+                    isPumpValue: true),
+                InfoTile("SET FLOW:", controller.getSetFlowValue() + ' lpm'),
+                InfoTile(
+                    "DIFF. PRES.:",
+                    controller.getDiffPressureValue() +
+                        ' ' +
+                        controller.getPressureUnit()),
+                InfoTile(
+                    "STATIC PRES.:",
+                    controller.getStaticPressureValue() +
+                        ' ' +
+                        controller.getPressureUnit()),
+                InfoTile("BAROM. PRES.:",
+                    controller.getBaroMetricPressureValue() + " mbar"),
+                InfoTile("DUCT TEMP.:", controller.getDuctTempValue() + ' °C'),
+                InfoTile("ISOKINETIC GRADE:",
+                    controller.getISOKineticValue() + ' %'),
+                InfoTile("POINT:", controller.getPointDoneByTotal()),
+                InfoTile(
+                    "ELAPSED TIME:", controller.getElapsedTimeInMints() + ' m'),
+                InfoTile(
+                    "SET TIME:", controller.getSetPointTimeInMints() + ' m'),
+                InfoTile("REMAINING TIME:",
+                    controller.getRemainingTimeInMints() + ' m'),
+                InfoTile("AXIS:", controller.getAxis()),
+                InfoTile("VELOCITY:", controller.getVelocity() + ' m/s'),
+                InfoTile("UPDATE TIME:", controller.getDateTime()),
+              ],
+            ),
           )),
     );
   }
