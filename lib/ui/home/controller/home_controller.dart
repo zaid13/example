@@ -30,9 +30,11 @@ class HomeController extends GetxController {
 
   Rx<bool> isFileLoading = Rx(true);
   Rx<bool> isFileDataLoading = Rx(false);
-  Rx<List<String>> fileData = Rx([]);
+  Rx<List<String>> fileDataList = Rx([]);
 
   String selectedFileData = "";
+
+  List<String> currentDownloadingFiles = [];
 
   int fileIndex = 0;
 
@@ -43,7 +45,7 @@ class HomeController extends GetxController {
     selectedFileIndex = 0;
     isFileLoading.value = true;
     isFileDataLoading.value = false;
-    fileData.value = [];
+    fileDataList.value = [];
 
     fileIndex = 0;
 
@@ -58,6 +60,7 @@ class HomeController extends GetxController {
   List<String> fileList = [];
 
   int selectedFileIndex = 0;
+  int currentFileListIndex = 0;
 
   void listensToService() {
     try {
@@ -108,15 +111,14 @@ class HomeController extends GetxController {
   }
 
   writeFile(String data, int fileIndex) async {
-    var tempPath = await getExternalStorageDirectory();
+    String folderPath = await createFolderIfNotExists('ble/' +
+        fileList[fileIndex]
+            .replaceFirst("c:\\ble-reading\\", "")
+            .replaceAll("\\", "/")
+            .replaceAll(fileList[fileIndex].split('\\').last, ""));
 
-    // String filePath = tempPath!.path +
-    //     "/ble/" +
-    //     fileList[fileIndex]
-    //         .replaceFirst("c:\\ble-reading\\", "")
-    //         .replaceAll("\\", "/");
+    String filePath = folderPath + fileList[fileIndex].split('\\').last;
 
-    String filePath = tempPath!.path + fileList[fileIndex].split('\\').last;
     final file = File(filePath);
     print('file data ${data.toString()}');
     file.writeAsStringSync(data);
@@ -165,27 +167,34 @@ class HomeController extends GetxController {
                 }
                 fileList = tempList;
                 fileIndex = fileIndex + 2;
-                totalFileNumber.value = fileList.length;
-                // isFileDataLoading.value = true;
-                fileData.value.add("");
-                fileData.value.add("");
+
+                fileDataList.value.add("");
+                fileDataList.value.add("");
                 createDirectories();
                 // callWriteSerivce(
                 //     selectedService!, selectedWriteCharacteristic!);
+              } else if (isFileDataLoading.value) {
+                currentFileNumber.value++;
+                if (currentFileNumber.value < totalFileNumber.value) {
+                  selectedFileIndex = fileList.indexWhere((element) =>
+                      element.replaceFirst("c:\\ble-reading\\", "") ==
+                      currentDownloadingFiles[currentFileNumber.value]);
+                  ;
+                  fileDataList.value.add("");
+                  callWriteSerivce(
+                      selectedService!, selectedWriteCharacteristic!);
+                } else {
+                  isFileDataLoading.value = false;
+                  update(['home_view_id']);
+                  fileIndex = 0;
+                  currentFileNumber.value = 0;
+                  selectedFileIndex = 0;
+                  totalFileNumber.value = 0;
+                  writeAllFiles();
+                }
               } else {
                 writeFile(selectedFileData, selectedFileIndex);
               }
-              // else if (fileIndex <= fileList.length) {
-              //   fileIndex++;
-              //   currentFileNumber.value++;
-              //   fileData.value.add("");
-              //   callWriteSerivce(
-              //       selectedService!, selectedWriteCharacteristic!);
-              // } else {
-              //   fileIndex = 0;
-              //   fileData.value.removeAt(0);
-              //   isFileDataLoading.value = false;
-              // }
             } else {
               if (fileList.isEmpty && fileIndex == 0) {
                 for (int i = 0; i < event.data!.length; i++) {
@@ -224,6 +233,7 @@ class HomeController extends GetxController {
   void createDirectories() {
     for (var path in fileList) {
       var parts = path.split('\\');
+      parts.removeLast();
       var currentNode = root.value;
 
       for (var part in parts) {
@@ -242,6 +252,47 @@ class HomeController extends GetxController {
     }
     isFileLoading.value = false;
     printDirectoryHierarchy(root.value, '');
+  }
+
+  void getAllFilesInDirectory(List<String> allFiles) {
+    totalFileNumber.value = allFiles.length;
+    currentFileNumber.value = 0;
+    isFileDataLoading.value = true;
+    update(['home_view_id']);
+    currentDownloadingFiles = allFiles;
+    selectedFileIndex = fileList.indexWhere((element) =>
+        element.replaceFirst("c:\\ble-reading\\", "") == allFiles[0]);
+    callWriteSerivce(selectedService!, selectedWriteCharacteristic!);
+  }
+
+  Future<void> writeAllFiles() async {
+    // var tempPath = await getExternalStorageDirectory();
+    for (int i = 0; i < fileDataList.value.length; i++) {
+      String folderPath = await createFolderIfNotExists('ble/' +
+          currentDownloadingFiles[i]
+              .replaceFirst("c:\\ble-reading\\", "")
+              .replaceAll("\\", "/")
+              .replaceAll(currentDownloadingFiles[i].split('\\').last, ""));
+
+      String filePath =
+          folderPath + currentDownloadingFiles[i].split('\\').last;
+      // String filePath =
+      //     tempPath!.path + currentDownloadingFiles[i].split('\\').last;
+      final file = await File(filePath);
+      print('file data ${fileDataList.value[i].toString()}');
+      file.writeAsStringSync(fileDataList.value[i]);
+      //file.writeAsString('bytes');
+      // Write the file
+      print("file store in ${file.path}");
+    }
+    currentDownloadingFiles = [];
+    fileDataList.value = [];
+    Get.showSnackbar(GetSnackBar(
+      title: 'Completed',
+      message: 'All files has been saved',
+      backgroundColor: Colors.green,
+      duration: Duration(seconds: 3),
+    ));
   }
 
   // void listenToDeviceState() {

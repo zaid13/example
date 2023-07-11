@@ -90,451 +90,84 @@ class _HomeViewState extends State<HomeView> {
         //   iconTheme: IconThemeData(color: headingColor),
         // ),
         // drawer: getDrawer(),
-        body: Column(
-          children: [
-            Expanded(
-              child: Obx(
-                () => controller.isFileLoading.value
-                    ? Container(
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              CircularProgressIndicator(
-                                color: mainColor,
+        body: GetBuilder<HomeController>(
+            id: 'home_view_id',
+            builder: (controller) {
+              return Column(
+                children: [
+                  Expanded(
+                    child: Obx(
+                      () => controller.isFileLoading.value
+                          ? Container(
+                              height: MediaQuery.of(context).size.height,
+                              width: MediaQuery.of(context).size.width,
+                              child: Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    CircularProgressIndicator(
+                                      color: mainColor,
+                                    ),
+                                    Text(
+                                      'Fetching files...',
+                                      style: TextStyle(color: secondaryColor),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              Text(
-                                'Fetching files...',
-                                style: TextStyle(color: secondaryColor),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    : controller.isFileDataLoading.value
-                        ? Container(
-                            height: MediaQuery.of(context).size.height,
-                            width: MediaQuery.of(context).size.width,
-                            child: Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.all(15.0),
-                                    child: new LinearPercentIndicator(
-                                      alignment: MainAxisAlignment.center,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.65,
-                                      animateFromLastPercent: true,
-                                      lineHeight: 30.0,
-                                      percent:
-                                          controller.getFileDataPercentage(),
-                                      center: Text(
-                                        "${(controller.getFileDataPercentage() * 100).round()}%",
-                                        style: TextStyle(color: headingColor),
-                                      ),
-                                      linearStrokeCap: LinearStrokeCap.butt,
-                                      progressColor: mainColor,
-                                      backgroundColor: secondaryColor,
+                            )
+                          : controller.isFileDataLoading.value
+                              ? Container(
+                                  height: MediaQuery.of(context).size.height,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.all(15.0),
+                                          child: new LinearPercentIndicator(
+                                            alignment: MainAxisAlignment.center,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.65,
+                                            animateFromLastPercent: true,
+                                            lineHeight: 30.0,
+                                            percent: controller
+                                                .getFileDataPercentage(),
+                                            center: Text(
+                                              "${(controller.getFileDataPercentage() * 100).round()}%",
+                                              style: TextStyle(
+                                                  color: headingColor),
+                                            ),
+                                            linearStrokeCap:
+                                                LinearStrokeCap.butt,
+                                            progressColor: mainColor,
+                                            backgroundColor: secondaryColor,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Fetching files data...',
+                                          style:
+                                              TextStyle(color: secondaryColor),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  Text(
-                                    'Fetching files data...',
-                                    style: TextStyle(color: secondaryColor),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                        : DirectoryGridView(
-                            directoryNode: controller.root.value),
-
-                // !controller.isMainFolderSeleceted.value
-                //         ? Wrap(
-                //             children: [
-                //               GestureDetector(
-                //                 onTap: () {
-                //                   controller.isMainFolderSeleceted.value =
-                //                       true;
-                //                   controller.mainSelectedFolder.value = 1;
-                //                 },
-                //                 child: Column(
-                //                   mainAxisSize: MainAxisSize.min,
-                //                   mainAxisAlignment:
-                //                       MainAxisAlignment.center,
-                //                   crossAxisAlignment:
-                //                       CrossAxisAlignment.center,
-                //                   children: [
-                //                     Icon(
-                //                       Icons.folder,
-                //                       size: MediaQuery.of(context)
-                //                               .size
-                //                               .width *
-                //                           0.3,
-                //                       color: secondaryColor,
-                //                     ),
-                //                     SizedBox(
-                //                         width: MediaQuery.of(context)
-                //                                 .size
-                //                                 .width *
-                //                             0.3,
-                //                         child: const Text(
-                //                           'MainFolder 1',
-                //                           maxLines: 2,
-                //                           textAlign: TextAlign.center,
-                //                           overflow: TextOverflow.ellipsis,
-                //                           style: TextStyle(
-                //                               color: secondaryColor),
-                //                         ))
-                //                   ],
-                //                 ),
-                //               ),
-                //               GestureDetector(
-                //                 onTap: () {
-                //                   controller.isMainFolderSeleceted.value =
-                //                       true;
-                //                   controller.mainSelectedFolder.value = 2;
-                //                 },
-                //                 child: Column(
-                //                   mainAxisSize: MainAxisSize.min,
-                //                   mainAxisAlignment:
-                //                       MainAxisAlignment.center,
-                //                   crossAxisAlignment:
-                //                       CrossAxisAlignment.center,
-                //                   children: [
-                //                     Icon(
-                //                       Icons.folder,
-                //                       size: MediaQuery.of(context)
-                //                               .size
-                //                               .width *
-                //                           0.3,
-                //                       color: secondaryColor,
-                //                     ),
-                //                     SizedBox(
-                //                         width: MediaQuery.of(context)
-                //                                 .size
-                //                                 .width *
-                //                             0.3,
-                //                         child: const Text(
-                //                           'MainFolder 2',
-                //                           maxLines: 2,
-                //                           textAlign: TextAlign.center,
-                //                           overflow: TextOverflow.ellipsis,
-                //                           style: TextStyle(
-                //                               color: secondaryColor),
-                //                         ))
-                //                   ],
-                //                 ),
-                //               ),
-                //             ],
-                //           )
-                //         : !controller.isSubFolderSelected.value
-                //             ? Wrap(
-                //                 children: [
-                //                   GestureDetector(
-                //                     onTap: () {
-                //                       controller.isSubFolderSelected.value =
-                //                           true;
-                //                       controller.subSelectedFolder.value =
-                //                           1;
-                //                     },
-                //                     child: Column(
-                //                       mainAxisSize: MainAxisSize.min,
-                //                       mainAxisAlignment:
-                //                           MainAxisAlignment.center,
-                //                       crossAxisAlignment:
-                //                           CrossAxisAlignment.center,
-                //                       children: [
-                //                         Icon(
-                //                           Icons.folder,
-                //                           size: MediaQuery.of(context)
-                //                                   .size
-                //                                   .width *
-                //                               0.3,
-                //                           color: secondaryColor,
-                //                         ),
-                //                         SizedBox(
-                //                             width: MediaQuery.of(context)
-                //                                     .size
-                //                                     .width *
-                //                                 0.3,
-                //                             child: const Text(
-                //                               'SubFolder 1',
-                //                               maxLines: 2,
-                //                               textAlign: TextAlign.center,
-                //                               overflow:
-                //                                   TextOverflow.ellipsis,
-                //                               style: TextStyle(
-                //                                   color: secondaryColor),
-                //                             ))
-                //                       ],
-                //                     ),
-                //                   ),
-                //                   GestureDetector(
-                //                     onTap: () {
-                //                       controller.isSubFolderSelected.value =
-                //                           true;
-                //                       controller.subSelectedFolder.value =
-                //                           2;
-                //                     },
-                //                     child: Column(
-                //                       mainAxisSize: MainAxisSize.min,
-                //                       mainAxisAlignment:
-                //                           MainAxisAlignment.center,
-                //                       crossAxisAlignment:
-                //                           CrossAxisAlignment.center,
-                //                       children: [
-                //                         Icon(
-                //                           Icons.folder,
-                //                           size: MediaQuery.of(context)
-                //                                   .size
-                //                                   .width *
-                //                               0.3,
-                //                           color: secondaryColor,
-                //                         ),
-                //                         SizedBox(
-                //                             width: MediaQuery.of(context)
-                //                                     .size
-                //                                     .width *
-                //                                 0.3,
-                //                             child: const Text(
-                //                               'SubFolder 2',
-                //                               maxLines: 2,
-                //                               textAlign: TextAlign.center,
-                //                               overflow:
-                //                                   TextOverflow.ellipsis,
-                //                               style: TextStyle(
-                //                                   color: secondaryColor),
-                //                             ))
-                //                       ],
-                //                     ),
-                //                   ),
-                //                   GestureDetector(
-                //                     onTap: () {
-                //                       controller.isSubFolderSelected.value =
-                //                           true;
-                //                       controller.subSelectedFolder.value =
-                //                           3;
-                //                     },
-                //                     child: Column(
-                //                       mainAxisSize: MainAxisSize.min,
-                //                       mainAxisAlignment:
-                //                           MainAxisAlignment.center,
-                //                       crossAxisAlignment:
-                //                           CrossAxisAlignment.center,
-                //                       children: [
-                //                         Icon(
-                //                           Icons.folder,
-                //                           size: MediaQuery.of(context)
-                //                                   .size
-                //                                   .width *
-                //                               0.3,
-                //                           color: secondaryColor,
-                //                         ),
-                //                         SizedBox(
-                //                             width: MediaQuery.of(context)
-                //                                     .size
-                //                                     .width *
-                //                                 0.3,
-                //                             child: const Text(
-                //                               'SubFolder 3',
-                //                               maxLines: 2,
-                //                               textAlign: TextAlign.center,
-                //                               overflow:
-                //                                   TextOverflow.ellipsis,
-                //                               style: TextStyle(
-                //                                   color: secondaryColor),
-                //                             ))
-                //                       ],
-                //                     ),
-                //                   ),
-                //                 ],
-                //               )
-                //             : Wrap(
-                //                 children: [
-                //                   GestureDetector(
-                //                     onTap: () {
-                //                       // controller.isMainFolderSeleceted.value = true;
-                //                       // controller.mainSelectedFolder.value = 1;
-                //                       if (controller
-                //                               .subSelectedFolder.value ==
-                //                           1) {
-                //                         controller.writeFile(
-                //                             controller
-                //                                 .fileData.value[controller
-                //                                         .mainSelectedFolder
-                //                                         .value ==
-                //                                     1
-                //                                 ? 0
-                //                                 : 6],
-                //                             controller.mainSelectedFolder
-                //                                         .value ==
-                //                                     1
-                //                                 ? 0
-                //                                 : 6);
-                //                       } else if (controller
-                //                               .subSelectedFolder.value ==
-                //                           2) {
-                //                         controller.writeFile(
-                //                             controller
-                //                                 .fileData.value[controller
-                //                                         .mainSelectedFolder
-                //                                         .value ==
-                //                                     1
-                //                                 ? 2
-                //                                 : 8],
-                //                             controller.mainSelectedFolder
-                //                                         .value ==
-                //                                     1
-                //                                 ? 2
-                //                                 : 8);
-                //                       } else if (controller
-                //                               .subSelectedFolder.value ==
-                //                           3) {
-                //                         controller.writeFile(
-                //                             controller
-                //                                 .fileData.value[controller
-                //                                         .mainSelectedFolder
-                //                                         .value ==
-                //                                     1
-                //                                 ? 4
-                //                                 : 10],
-                //                             controller.mainSelectedFolder
-                //                                         .value ==
-                //                                     1
-                //                                 ? 4
-                //                                 : 10);
-                //                       }
-                //                     },
-                //                     child: Column(
-                //                       mainAxisSize: MainAxisSize.min,
-                //                       mainAxisAlignment:
-                //                           MainAxisAlignment.center,
-                //                       crossAxisAlignment:
-                //                           CrossAxisAlignment.center,
-                //                       children: [
-                //                         Icon(
-                //                           CupertinoIcons.doc,
-                //                           size: MediaQuery.of(context)
-                //                                   .size
-                //                                   .width *
-                //                               0.3,
-                //                           color: secondaryColor,
-                //                         ),
-                //                         SizedBox(
-                //                             width: MediaQuery.of(context)
-                //                                     .size
-                //                                     .width *
-                //                                 0.3,
-                //                             child: const Text(
-                //                               'File 1',
-                //                               maxLines: 2,
-                //                               textAlign: TextAlign.center,
-                //                               overflow:
-                //                                   TextOverflow.ellipsis,
-                //                               style: TextStyle(
-                //                                   color: secondaryColor),
-                //                             ))
-                //                       ],
-                //                     ),
-                //                   ),
-                //                   GestureDetector(
-                //                     onTap: () {
-                //                       if (controller
-                //                               .subSelectedFolder.value ==
-                //                           1) {
-                //                         controller.writeFile(
-                //                             controller
-                //                                 .fileData.value[controller
-                //                                         .mainSelectedFolder
-                //                                         .value ==
-                //                                     1
-                //                                 ? 1
-                //                                 : 7],
-                //                             controller.mainSelectedFolder
-                //                                         .value ==
-                //                                     1
-                //                                 ? 1
-                //                                 : 7);
-                //                       } else if (controller
-                //                               .subSelectedFolder.value ==
-                //                           2) {
-                //                         controller.writeFile(
-                //                             controller
-                //                                 .fileData.value[controller
-                //                                         .mainSelectedFolder
-                //                                         .value ==
-                //                                     1
-                //                                 ? 3
-                //                                 : 9],
-                //                             controller.mainSelectedFolder
-                //                                         .value ==
-                //                                     1
-                //                                 ? 3
-                //                                 : 9);
-                //                       } else if (controller
-                //                               .subSelectedFolder.value ==
-                //                           3) {
-                //                         controller.writeFile(
-                //                             controller
-                //                                 .fileData.value[controller
-                //                                         .mainSelectedFolder
-                //                                         .value ==
-                //                                     1
-                //                                 ? 5
-                //                                 : 11],
-                //                             controller.mainSelectedFolder
-                //                                         .value ==
-                //                                     1
-                //                                 ? 5
-                //                                 : 11);
-                //                       }
-                //                       // controller.isMainFolderSeleceted.value = true;
-                //                       // controller.mainSelectedFolder.value = 2;
-                //                     },
-                //                     child: Column(
-                //                       mainAxisSize: MainAxisSize.min,
-                //                       mainAxisAlignment:
-                //                           MainAxisAlignment.center,
-                //                       crossAxisAlignment:
-                //                           CrossAxisAlignment.center,
-                //                       children: [
-                //                         Icon(
-                //                           CupertinoIcons.doc,
-                //                           size: MediaQuery.of(context)
-                //                                   .size
-                //                                   .width *
-                //                               0.3,
-                //                           color: secondaryColor,
-                //                         ),
-                //                         SizedBox(
-                //                             width: MediaQuery.of(context)
-                //                                     .size
-                //                                     .width *
-                //                                 0.3,
-                //                             child: const Text(
-                //                               'File 2',
-                //                               maxLines: 2,
-                //                               textAlign: TextAlign.center,
-                //                               overflow:
-                //                                   TextOverflow.ellipsis,
-                //                               style: TextStyle(
-                //                                   color: secondaryColor),
-                //                             ))
-                //                       ],
-                //                     ),
-                //                   ),
-                //                 ],
-                //               ),
-              ),
-            ),
-          ],
-        ));
+                                )
+                              : DirectoryGridView(
+                                  directoryNode: controller.root.value),
+                    ),
+                  ),
+                ],
+              );
+            }));
   }
 }

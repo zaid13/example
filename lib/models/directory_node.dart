@@ -16,6 +16,16 @@ class DirectoryNode {
     files!.add(file);
   }
 
+  List<String> getAllFiles() {
+    List<String> allFiles = [...?files];
+
+    for (var subdirectory in subdirectories!) {
+      allFiles.addAll(subdirectory.getAllFiles());
+    }
+
+    return allFiles;
+  }
+
   @override
   String toString() {
     return name!;
