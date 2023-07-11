@@ -368,6 +368,13 @@ class LiveDataController extends GetxController {
       return completeLiveData.value[14];
     } else {
       return 'N/A';
+
+
+
+
+
+
+
     }
   }
 

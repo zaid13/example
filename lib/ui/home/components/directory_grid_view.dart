@@ -30,101 +30,179 @@ class DirectoryGridView extends StatelessWidget {
         iconTheme: IconThemeData(color: headingColor),
       ),
       drawer: getDrawer(),
-      body: Column(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-              child: GridView.builder(
-                padding: EdgeInsets.all(16),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                ),
-                itemCount: directoryNode.subdirectories!.length +
-                    directoryNode.files!.length,
-                itemBuilder: (context, index) {
-                  if (index < directoryNode.subdirectories!.length) {
-                    return GestureDetector(
-                      onTap: () {
-                        // Navigate to the tapped subdirectory
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DirectoryGridView(
-                              directoryNode:
-                                  directoryNode.subdirectories![index],
+      body: GetBuilder<HomeController>(
+          id: 'home_view_id',
+          builder: (controller) {
+            print(controller.isFileLoading.value);
+            return Column(
+              children: [
+                Obx(
+                      () => controller.isFileLoading.value
+                      ? Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(
+                            color: mainColor,
+                          ),
+                          Text(
+                            'Fetching files...',
+                            style: TextStyle(color: secondaryColor),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                      : controller.isFileDataLoading.value
+                      ? Expanded(
+                        child: Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment:
+                          MainAxisAlignment.center,
+                          crossAxisAlignment:
+                          CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(15.0),
+                              child: new LinearPercentIndicator(
+                                alignment: MainAxisAlignment.center,
+                                width: MediaQuery.of(context)
+                                    .size
+                                    .width *
+                                    0.65,
+                                animateFromLastPercent: true,
+                                lineHeight: 30.0,
+                                percent: controller
+                                    .getFileDataPercentage(),
+                                center: Text(
+                                  "${(controller.getFileDataPercentage() * 100).round()}%",
+                                  style: TextStyle(
+                                      color: headingColor),
+                                ),
+                                linearStrokeCap:
+                                LinearStrokeCap.butt,
+                                progressColor: mainColor,
+                                backgroundColor: secondaryColor,
+                              ),
                             ),
+                            Text(
+                              'Fetching files data...',
+                              style:
+                              TextStyle(color: secondaryColor),
+                            ),
+                          ],
+                        ),
+                    ),
+                  ),
+                      )
+                      : Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                          child: GridView.builder(
+                            padding: EdgeInsets.all(16),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              mainAxisSpacing: 16,
+                              crossAxisSpacing: 16,
+                            ),
+                            itemCount: directoryNode.subdirectories!.length +
+                                directoryNode.files!.length,
+                            itemBuilder: (context, index) {
+                              if (index < directoryNode.subdirectories!.length) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    // Navigate to the tapped subdirectory
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => DirectoryGridView(
+                                          directoryNode:
+                                          directoryNode.subdirectories![index],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.folder,
+                                        size: MediaQuery.of(context).size.width * 0.2,
+                                        color: secondaryColor,
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          directoryNode.subdirectories![index].name ??
+                                              "",
+                                          maxLines: 2,
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(color: secondaryColor),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              } else {
+                                final fileIndex =
+                                    index - directoryNode.subdirectories!.length;
+                                return GestureDetector(
+                                  onTap: () {
+                                    controller.selectedFileIndex = controller.fileList
+                                        .indexWhere((element) =>
+                                    element.replaceFirst(
+                                        "c:\\ble-reading\\", "") ==
+                                        directoryNode.files![fileIndex]);
+                                    controller.callWriteSerivce(
+                                        controller.selectedService!,
+                                        controller.selectedWriteCharacteristic!);
+                                    ;
+                                  },
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        CupertinoIcons.doc,
+                                        size: MediaQuery.of(context).size.width * 0.2,
+                                        color: secondaryColor,
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          directoryNode.files![fileIndex]
+                                              .split('\\')
+                                              .last,
+                                          maxLines: 2,
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(color: secondaryColor),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }
+                            },
                           ),
-                        );
-                      },
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.folder,
-                            size: MediaQuery.of(context).size.width * 0.25,
-                            color: secondaryColor,
-                          ),
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.3,
-                              child: Text(
-                                directoryNode.subdirectories![index].name ?? "",
-                                maxLines: 2,
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(color: secondaryColor),
-                              ))
-                        ],
+                        ),
                       ),
-                    );
-                  } else {
-                    final fileIndex =
-                        index - directoryNode.subdirectories!.length;
-                    return GestureDetector(
-                      onTap: () {
-                        controller.selectedFileIndex = controller.fileList
-                            .indexWhere((element) =>
-                                element.replaceFirst("c:\\ble-reading\\", "") ==
-                                directoryNode.files![fileIndex]);
-                        controller.callWriteSerivce(controller.selectedService!,
-                            controller.selectedWriteCharacteristic!);
-                        ;
-                      },
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(
-                            CupertinoIcons.doc,
-                            size: MediaQuery.of(context).size.width * 0.25,
-                            color: secondaryColor,
-                          ),
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.3,
-                              child: Text(
-                                directoryNode.files![fileIndex]
-                                    .split('\\')
-                                    .last,
-                                maxLines: 2,
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(color: secondaryColor),
-                              ))
-                        ],
-                      ),
-                    );
-                  }
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
+                )
+                ,
+              ],
+            );
+          }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (!controller.isFileDataLoading.value) {

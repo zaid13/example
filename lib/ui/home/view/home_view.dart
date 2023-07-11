@@ -93,6 +93,8 @@ class _HomeViewState extends State<HomeView> {
         body: GetBuilder<HomeController>(
             id: 'home_view_id',
             builder: (controller) {
+              print(controller.isFileLoading.value);
+
               return Column(
                 children: [
                   Expanded(

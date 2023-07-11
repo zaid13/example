@@ -27,6 +27,13 @@ class BluetoothConnectionsController extends GetxController {
 
   Device? device;
 
+
+  @override
+  onClose(){
+    print("hot restart called");
+    disconnectBluetoothDevice();
+  }
+
   scanForDevices() async {
     if (await Permission.location.request().isGranted)
     // Either the permission was already granted before or the user just granted it.
@@ -138,6 +145,10 @@ class BluetoothConnectionsController extends GetxController {
     //     device: device,
     //   ));
     // }
+  }
+
+  disconnectBluetoothDevice(){
+    device!.disConnect();
   }
 
   void listenToDeviceState() {
