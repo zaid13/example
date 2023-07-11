@@ -37,6 +37,46 @@ class _LineChartComponentState extends State<LineChartComponent> {
   }
 
 
+  Widget rightTileWidget(double value, TitleMeta meta) {
+
+    const style = TextStyle(
+
+      color: Colors.white,
+
+      fontSize: 12,
+    );
+    String text='';
+
+    if(value == meta.max){
+      text = value.toString();
+    }
+    if(value.toInt() == ((meta.max +meta.min)/2).toInt()){
+      text = value.toString();
+    }
+    if(value == meta.min){
+      text =value.toString();
+    }
+    // switch (value.toInt()) {
+    //   case 1:
+    //     text = '10K';
+    //     break;
+    //   case 5:
+    //     text = '30k';
+    //     break;
+    //   case meta.max.toInt():
+    //     text = '50k';
+    //     break;
+    //   default:
+    //     return Container();
+    // }
+
+    return Text(text, style: style, textAlign: TextAlign.right);
+
+
+    return Text(text, style: style, textAlign: TextAlign.right);
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +126,7 @@ class _LineChartComponentState extends State<LineChartComponent> {
             showTitles: true,
             reservedSize: 18,
             interval: 1,
-            getTitlesWidget: tileWidget,
+            getTitlesWidget: rightTileWidget,
           ),
 
         ) ,
