@@ -30,6 +30,7 @@ class HomeController extends GetxController {
 
   Rx<bool> isFileLoading = Rx(true);
   Rx<bool> isFileDataLoading = Rx(false);
+  Rx<bool> isFileDownLoadingNow = Rx(false);
   Rx<List<String>> fileDataList = Rx([]);
 
   String selectedFileData = "";
@@ -42,6 +43,7 @@ class HomeController extends GetxController {
   Rx<int> currentFileNumber = Rx(0);
 
   resetData() {
+    isFileDownLoadingNow.value  = false;
     selectedFileIndex = 0;
     isFileLoading.value = true;
     isFileDataLoading.value = false;
@@ -125,6 +127,7 @@ class HomeController extends GetxController {
     //file.writeAsString('bytes');
     // Write the file
     print("file store in ${file.path}");
+    isFileDownLoadingNow.value  = false;
     Get.showSnackbar(GetSnackBar(
       title: 'Completed',
       message: 'File has been saved',
@@ -135,7 +138,7 @@ class HomeController extends GetxController {
 
   getFileDataPercentage() {
     try {
-      if (totalFileNumber.value == 0) return 0;
+      if (totalFileNumber.value == 0) return 0.0;
       return currentFileNumber.value / totalFileNumber.value;
     } catch (e) {
       return 0;

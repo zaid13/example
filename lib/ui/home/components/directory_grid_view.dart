@@ -58,8 +58,8 @@ class DirectoryGridView extends StatelessWidget {
                       ),
                     ),
                   )
-                      : controller.isFileDataLoading.value
-                      ? Expanded(
+                      : controller.isFileDataLoading.value || controller.isFileDownLoadingNow.value
+                          ? Expanded(
                         child: Container(
                     height: MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width,
@@ -111,8 +111,8 @@ class DirectoryGridView extends StatelessWidget {
                             padding: EdgeInsets.all(16),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 3,
-                              mainAxisSpacing: 16,
-                              crossAxisSpacing: 16,
+                              mainAxisSpacing: 100,
+                              crossAxisSpacing: 10,
                             ),
                             itemCount: directoryNode.subdirectories!.length +
                                 directoryNode.files!.length,
@@ -138,14 +138,14 @@ class DirectoryGridView extends StatelessWidget {
                                     children: [
                                       Icon(
                                         Icons.folder,
-                                        size: MediaQuery.of(context).size.width * 0.2,
+                                        size: 50,
                                         color: secondaryColor,
                                       ),
                                       Expanded(
                                         child: Text(
                                           directoryNode.subdirectories![index].name ??
                                               "",
-                                          maxLines: 2,
+                                          maxLines: 5,
                                           textAlign: TextAlign.center,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(color: secondaryColor),
@@ -159,6 +159,7 @@ class DirectoryGridView extends StatelessWidget {
                                     index - directoryNode.subdirectories!.length;
                                 return GestureDetector(
                                   onTap: () {
+                                    controller.isFileDownLoadingNow.value  = true;
                                     controller.selectedFileIndex = controller.fileList
                                         .indexWhere((element) =>
                                     element.replaceFirst(
@@ -176,7 +177,7 @@ class DirectoryGridView extends StatelessWidget {
                                     children: [
                                       Icon(
                                         CupertinoIcons.doc,
-                                        size: MediaQuery.of(context).size.width * 0.2,
+                                        size: 50,
                                         color: secondaryColor,
                                       ),
                                       Expanded(
