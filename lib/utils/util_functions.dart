@@ -14,6 +14,7 @@ void printDirectoryHierarchy(DirectoryNode node, String indent) {
 }
 
 Future<String> createFolderIfNotExists(String folderName) async {
+  // Directory? appDir = Directory('/storage/emulated/0/Download');
   Directory? appDir = await getExternalStorageDirectory();
   String folderPath = '${appDir!.path}/$folderName';
 

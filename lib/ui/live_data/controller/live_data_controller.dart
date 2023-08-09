@@ -26,19 +26,18 @@ class LiveDataController extends GetxController {
 
   Rx<List<String>> completeLiveData = Rx([]);
 
-
-   DateTime updateTime =DateTime(0,0,0,0,0,0,0,0) ;
+  DateTime updateTime = DateTime(0, 0, 0, 0, 0, 0, 0, 0);
   void resetChartsData() {
     diffPressure.value = [];
     ductTemp.value = [];
     flowRate.value = [];
     isoKineticTemp.value = [];
     chartDataIndex.value = 0;
-    updateTime=DateTime(0,0,0,0,0,0,0,0);
+    updateTime = DateTime(0, 0, 0, 0, 0, 0, 0, 0);
   }
 
   void addChartsData() {
-    if (chartDataIndex.value < 20) {
+    if (chartDataIndex.value < 10) {
       if (completeLiveData.value.asMap().containsKey(4)) {
         diffPressure.value.add(double.parse(completeLiveData.value[4]));
       } else {
@@ -63,30 +62,46 @@ class LiveDataController extends GetxController {
       }
     } else {
       if (completeLiveData.value.asMap().containsKey(4)) {
-        diffPressure.value[chartDataIndex.value % 20] =
-            double.parse(completeLiveData.value[4]);
+        diffPressure.value.removeAt(0);
+        diffPressure.value.add(double.parse(completeLiveData.value[4]));
+        // diffPressure.value[chartDataIndex.value % 20] =
+        //     double.parse(completeLiveData.value[4]);
       } else {
-        diffPressure.value[chartDataIndex.value % 20] = 0;
+        diffPressure.value.removeAt(0);
+        diffPressure.value.add(0.0);
+        // diffPressure.value[chartDataIndex.value % 20] = 0;
       }
       if (completeLiveData.value.asMap().containsKey(7)) {
-        ductTemp.value[chartDataIndex.value % 20] =
-            double.parse(completeLiveData.value[7]);
+        ductTemp.value.removeAt(0);
+        ductTemp.value.add(double.parse(completeLiveData.value[7]));
+        // ductTemp.value[chartDataIndex.value % 20] =
+        //     double.parse(completeLiveData.value[7]);
       } else {
-        ductTemp.value[chartDataIndex.value % 20] = 0;
+        ductTemp.value.removeAt(0);
+        ductTemp.value.add(0.0);
+        // ductTemp.value[chartDataIndex.value % 20] = 0;
       }
 
       if (completeLiveData.value.asMap().containsKey(3)) {
-        flowRate.value[chartDataIndex.value % 20] =
-            double.parse(completeLiveData.value[3]);
+        flowRate.value.removeAt(0);
+        flowRate.value.add(double.parse(completeLiveData.value[3]));
+        // flowRate.value[chartDataIndex.value % 20] =
+        //     double.parse(completeLiveData.value[3]);
       } else {
-        flowRate.value[chartDataIndex.value % 20] = 0;
+        flowRate.value.removeAt(0);
+        flowRate.value.add(0.0);
+        // flowRate.value[chartDataIndex.value % 20] = 0;
       }
 
       if (completeLiveData.value.asMap().containsKey(8)) {
-        isoKineticTemp.value[chartDataIndex.value % 20] =
-            double.parse(completeLiveData.value[8]);
+        isoKineticTemp.value.removeAt(0);
+        isoKineticTemp.value.add(double.parse(completeLiveData.value[8]));
+        // isoKineticTemp.value[chartDataIndex.value % 20] =
+        //     double.parse(completeLiveData.value[8]) ;
       } else {
-        isoKineticTemp.value[chartDataIndex.value % 20] = 0;
+        isoKineticTemp.value.removeAt(0);
+        isoKineticTemp.value.add(0.0);
+        // isoKineticTemp.value[chartDataIndex.value % 20] = 0;
       }
     }
     chartDataIndex.value++;
@@ -368,19 +383,11 @@ class LiveDataController extends GetxController {
       return completeLiveData.value[14];
     } else {
       return 'N/A';
-
-
-
-
-
-
-
     }
   }
 
   getDateTime() {
-
-   return  DateFormat('HH:mm').format(updateTime);
+    return DateFormat('HH:mm').format(updateTime);
     // return updateTime.
     if (completeLiveData.value.asMap().containsKey(14)) {
       return completeLiveData.value[14];
@@ -388,7 +395,6 @@ class LiveDataController extends GetxController {
       return 'N/A';
     }
   }
-
 
   getPumpStatusColor() {
     if (completeLiveData.value.asMap().containsKey(1)) {
