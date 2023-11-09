@@ -43,7 +43,7 @@ class HomeController extends GetxController {
   Rx<int> currentFileNumber = Rx(0);
 
   resetData() {
-    isFileDownLoadingNow.value  = false;
+    isFileDownLoadingNow.value = false;
     selectedFileIndex = 0;
     isFileLoading.value = true;
     isFileDataLoading.value = false;
@@ -102,7 +102,9 @@ class HomeController extends GetxController {
   ) async {
     Future.delayed(Duration(seconds: 1)).then((value) {
       Uint8List data = Uint8List.fromList([
-        selectedFileIndex == 0 ? selectedFileIndex : selectedFileIndex + 2
+        (selectedFileIndex == 0 && fileList.isEmpty)
+            ? selectedFileIndex
+            : selectedFileIndex + 2
       ]); //32
       print('data: $data');
       device!.writeData(service.serviceUuid, characteristic.uuid, false, data);
@@ -127,7 +129,7 @@ class HomeController extends GetxController {
     //file.writeAsString('bytes');
     // Write the file
     print("file store in ${file.path}");
-    isFileDownLoadingNow.value  = false;
+    isFileDownLoadingNow.value = false;
     Get.showSnackbar(GetSnackBar(
       title: 'Completed',
       message: 'File has been saved',

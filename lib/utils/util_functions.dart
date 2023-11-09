@@ -16,9 +16,13 @@ void printDirectoryHierarchy(DirectoryNode node, String indent) {
 Future<String> createFolderIfNotExists(String folderName) async {
   // Directory? appDir = await getExternalStorageDirectory();
 
-  String appPath ='/storage/emulated/0/Documents';
+  // String appPath ='/storage/emulated/0/Documents';
+  Directory? appDir = await getExternalStorageDirectory();
+  String folderPath = '${appDir!.path}/$folderName';
 
-  String folderPath = '${appPath}/$folderName';
+  print('folderName');
+  print(folderName);
+  // String folderPath = '${appPath}/$folderName';
 
   // Create the folder if it doesn't exist
   if (!(await Directory(folderPath).exists())) {
