@@ -102,9 +102,11 @@ class HomeController extends GetxController {
   ) async {
     Future.delayed(Duration(seconds: 1)).then((value) {
       Uint8List data = Uint8List.fromList([
-        (selectedFileIndex == 0 && fileList.isEmpty)
+        (selectedFileIndex == 0
+            //     // && fileList.isEmpty
+            )
             ? selectedFileIndex
-            : selectedFileIndex + 2
+            : selectedFileIndex + 1
       ]); //32
       print('data: $data');
       device!.writeData(service.serviceUuid, characteristic.uuid, false, data);
@@ -125,7 +127,13 @@ class HomeController extends GetxController {
 
     final file = File(filePath);
     print('file data ${data.toString()}');
-    file.writeAsStringSync(data);
+    if (file.existsSync()) {
+      file.writeAsStringSync(data);
+    } else {
+      await File(filePath).create(recursive: true);
+      file.writeAsStringSync(data);
+    }
+
     //file.writeAsString('bytes');
     // Write the file
     print("file store in ${file.path}");
@@ -163,18 +171,18 @@ class HomeController extends GetxController {
               print('file recieved ');
               // writeFile(bytesBuilder.toBytes());
               // writeFile(data);
+              ///
+              print(fileList.toString());
               if (fileList.isEmpty && selectedFileIndex == 0) {
                 fileList = fileNames.split(',');
-                fileList.removeAt(0);
+                // fileList.removeAt(0);
                 List<String> tempList = [];
                 for (String fileName in fileList) {
                   tempList.add(fileName.replaceFirst("c:\\ble-reading\\", ""));
                 }
                 fileList = tempList;
-                fileIndex = fileIndex + 2;
+                fileIndex = fileIndex;
 
-                fileDataList.value.add("");
-                fileDataList.value.add("");
                 createDirectories();
                 // callWriteSerivce(
                 //     selectedService!, selectedWriteCharacteristic!);
@@ -185,9 +193,11 @@ class HomeController extends GetxController {
                       element.replaceFirst("c:\\ble-reading\\", "") ==
                       currentDownloadingFiles[currentFileNumber.value]);
                   ;
-                  fileDataList.value.add("");
-                  callWriteSerivce(
-                      selectedService!, selectedWriteCharacteristic!);
+                  fileDataList.value.add(selectedFileData);
+                  Future.delayed(Duration(seconds: 1)).then((value) {
+                    callWriteSerivce(
+                        selectedService!, selectedWriteCharacteristic!);
+                  });
                 } else {
                   isFileDataLoading.value = false;
                   update(['home_view_id']);
@@ -285,7 +295,13 @@ class HomeController extends GetxController {
       //     tempPath!.path + currentDownloadingFiles[i].split('\\').last;
       final file = await File(filePath);
       print('file data ${fileDataList.value[i].toString()}');
-      file.writeAsStringSync(fileDataList.value[i]);
+      if (file.existsSync()) {
+        file.writeAsStringSync(fileDataList.value[i]);
+      } else {
+        await File(filePath).create(recursive: true);
+        file.writeAsStringSync(fileDataList.value[i]);
+      }
+
       //file.writeAsString('bytes');
       // Write the file
       print("file store in ${file.path}");
