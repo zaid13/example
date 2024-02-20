@@ -192,7 +192,6 @@ class HomeController extends GetxController {
                   selectedFileIndex = fileList.indexWhere((element) =>
                       element.replaceFirst("c:\\ble-reading\\", "") ==
                       currentDownloadingFiles[currentFileNumber.value]);
-                  ;
                   fileDataList.value.add(selectedFileData);
                   Future.delayed(Duration(seconds: 1)).then((value) {
                     callWriteSerivce(
@@ -205,6 +204,7 @@ class HomeController extends GetxController {
                   currentFileNumber.value = 0;
                   selectedFileIndex = 0;
                   totalFileNumber.value = 0;
+                  fileDataList.value.add(selectedFileData);
                   writeAllFiles();
                 }
               } else {
